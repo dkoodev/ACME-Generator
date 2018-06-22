@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Jumbotron } from 'reactstrap';
 import '../assets/css/styles.css';
 
 class Navbar extends React.Component {
@@ -13,13 +12,31 @@ class Navbar extends React.Component {
   render() {
     return (
       <div id="Navbar">
-        <Jumbotron >
-          <h1>Animated Codes Made Easy Client</h1>
-          <p>
-            This is a simple client for demoing the ACME API.
-          </p>
-        </Jumbotron>
+        <nav className="navbar" role="navigation" aria-label="main navigation">
+          <div className="navbar-brand">
+            <a className="navbar-item" href="https://www.acme.codes">
+              <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28" />
+            </a>
 
+          <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true">Home</span>
+            <span aria-hidden="true">About</span>
+            <span aria-hidden="true">FAQ</span>
+          </a>
+        </div>
+      </nav>
+        <section className="hero">
+          <div className="hero-body">
+            <div className="container">
+              <h1 className="title">
+                Animated Code Made Easy Generator
+              </h1>
+              <h2 className="subtitle">
+                Nothing to explain! Just try it out below.
+              </h2>
+            </div>
+          </div>
+        </section>
       </div>
     );
   }

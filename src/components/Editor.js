@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Jumbotron } from 'reactstrap';
 import '../assets/css/styles.css';
 
 class Editor extends React.Component {
