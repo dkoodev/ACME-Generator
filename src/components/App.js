@@ -3,13 +3,17 @@ import '../assets/css/styles.css';
 
 // Modules
 import React, { Component } from 'react';
-import {Columns, Column} from 'bloomer';
 
 // Components
-import Navbar from './Navbar';
+import NavigationBar from './NavigationBar';
 import Progressbar from './Progressbar';
-import Product from './Product';
+import ProductStage from './ProductStage';
 import Editor from './Editor';
+
+
+// Contexts
+import { StageContext } from './Contexts/StageContext';
+
 
 
 class App extends React.Component {
@@ -23,16 +27,22 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Navbar />
-        <Progressbar />
-        <div class="columns">
-          <div class="column">
-            <Product />
+        <NavigationBar  />
+        <StageContext.Provider value={0}>
+          <Progressbar />
+          <br />
+          <br />
+          <div className="container">
+            <div className="columns">
+              <div className="column">
+                <ProductStage />
+              </div>
+              <div className="column">
+                <Editor />
+              </div>
+            </div>
           </div>
-          <div class="column">
-            <Editor />
-          </div>
-        </div>
+        </StageContext.Provider>
       </div>
     );
   }

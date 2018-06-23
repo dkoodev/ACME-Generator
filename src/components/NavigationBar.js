@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../assets/css/styles.css';
 
-class Navbar extends React.Component {
+class NavigationBar extends React.Component {
   constructor(){
     super();
     this.state = {
@@ -11,20 +11,20 @@ class Navbar extends React.Component {
 
   render() {
     return (
-      <div id="Navbar">
+      <div id="NavigationBar">
         <nav className="navbar" role="navigation" aria-label="main navigation">
           <div className="navbar-brand">
             <a className="navbar-item" href="https://www.acme.codes">
-              <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28" />
+              <img src={require('../assets/images/logo.png')} id="logo-navbar" />
             </a>
-
-          <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false">
-            <span aria-hidden="true">Home</span>
-            <span aria-hidden="true">About</span>
-            <span aria-hidden="true">FAQ</span>
-          </a>
-        </div>
-      </nav>
+            <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false">
+              <span aria-hidden="true">Home</span>
+              <span aria-hidden="true">About</span>
+              <span aria-hidden="true">FAQ</span>
+            </a>
+          </div>
+        </nav>
+        {/* Big Banner */}
         <section className="hero">
           <div className="hero-body">
             <div className="container">
@@ -42,4 +42,4 @@ class Navbar extends React.Component {
   }
 }
 
-export default Navbar;
+export default NavigationBar;

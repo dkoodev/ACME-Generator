@@ -1,23 +1,8 @@
-/* h1 {
-  font-family: helvetica;
-  font-weight: 200;
-} */
 
-div#Progressbar {
-  width:100%;
-  height: 10%;
-}
 
-div#Product {
-  display: inline-block;
-  height: 50%;
-  width:50%;
-  background-color: red;
-}
-
-div#Editor {
-  display:inline-block;
-  width:50%;
-  background-color: blue;
-
+div img#logo-navbar {
+  height: auto;
+  width: auto;
+  padding-left: 1rem;
+  margin: 0;
 }
