@@ -1,8 +1,41 @@
-
-
 div img#logo-navbar {
   height: auto;
   width: auto;
   padding-left: 1rem;
   margin: 0;
+}
+
+div#Editor.stage0{
+  width: 50rem;
+}
+
+/* Editor0 */
+.spacing {
+  width:auto;
+  height: 5rem;
+  transition: height 1800ms;
+}
+
+.spacing.squish {
+  height: 1.5rem ;
+}
+
+/* ProductStage */
+.productStage.hide {
+  opacity:0;
+  transition: opacity 1800ms;
+}
+
+.productStage {
+  opacity:1;
+  transition: opacity 1800ms;
+}
+
+#qrcode-container{
+  max-width: 30rem;
+  margin:auto;
+}
+
+#qrcode{
+  width:100rem;
 }

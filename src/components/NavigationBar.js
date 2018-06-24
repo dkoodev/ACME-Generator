@@ -27,7 +27,7 @@ class NavigationBar extends React.Component {
         {/* Big Banner */}
         <section className="hero">
           <div className="hero-body">
-            <div className="container">
+            <div className="container has-text-grey-dark	">
               <h1 className="title">
                 Animated Code Made Easy Generator
               </h1>

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Steps } from 'antd';
 import '../assets/css/styles.css';
+import {StageContext, withStageContext} from './Contexts/StageContext';
 
 let Step = Steps.Step;
 
@@ -13,9 +14,6 @@ class Progressbar extends React.Component {
     };
   }
 
-  progress(){
-
-  }
 
   render() {
     return (
@@ -33,4 +31,4 @@ class Progressbar extends React.Component {
   }
 }
 
-export default Progressbar;
+export default withStageContext(Progressbar);

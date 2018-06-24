@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../assets/css/styles.css';
+import {StageContext, withStageContext} from './Contexts/StageContext';
 
 class ProductStage extends React.Component {
   constructor(){
@@ -12,16 +13,12 @@ class ProductStage extends React.Component {
   render() {
     return (
       <div id="ProductStage" >
-        <div className="box">
-          {/* <div className="box"> */}
-            <figure className="image ">
-              <img src="https://bulma.io/images/placeholders/128x128.png" />
-            </figure>
-          {/* </div> */}
+        <div id="qrcode-container" className="box qrcode-container">
+              <img id="qrcode"src={this.props.qrcodeUrl} height="auto" width="auto"/>
         </div>
       </div>
     );
   }
 }
 
-export default ProductStage;
+export default withStageContext(ProductStage);
