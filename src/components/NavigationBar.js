@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../assets/css/styles.css';
+import img from '../assets/images/logo.png';
 
 class NavigationBar extends React.Component {
   constructor(){
@@ -10,12 +11,13 @@ class NavigationBar extends React.Component {
   }
 
   render() {
+
     return (
       <div id="NavigationBar">
         <nav className="navbar" role="navigation" aria-label="main navigation">
           <div className="navbar-brand">
             <a className="navbar-item" href="https://www.acme.codes">
-              <img src={require('../assets/images/logo.png')} id="logo-navbar" />
+              <img src={String(img)} id="logo-navbar" />
             </a>
             <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false">
               <span aria-hidden="true">Home</span>

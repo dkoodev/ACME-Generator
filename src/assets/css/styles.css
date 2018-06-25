@@ -13,22 +13,22 @@ div#Editor.stage0{
 .spacing {
   width:auto;
   height: 5rem;
-  transition: height 1800ms;
+  transition: height 1000ms;
 }
 
 .spacing.squish {
-  height: 1.5rem ;
+  height: 0rem ;
 }
 
 /* ProductStage */
 .productStage.hide {
   opacity:0;
-  transition: opacity 1800ms;
+  transition: opacity 1000ms;
 }
 
 .productStage {
   opacity:1;
-  transition: opacity 1800ms;
+  transition: opacity 1000ms;
 }
 
 #qrcode-container{

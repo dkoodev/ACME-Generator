@@ -19,6 +19,7 @@ class App extends React.Component {
   constructor(){
     super();
 
+    // Stage Context functions for nested components
     this.nextStage = () => {
       this.setState(state => ({
         stage : state.stage + 1
@@ -29,6 +30,7 @@ class App extends React.Component {
         stage : state.stage - 1
       }));
     }
+
     this.state = {
       stageContext:{
         stage : 0,
@@ -36,6 +38,7 @@ class App extends React.Component {
         prevStage : this.prevStage,
       },
       qrcodeUrl: "",
+      qrcodeCanvas: {},
     }
   }
 
@@ -44,14 +47,20 @@ class App extends React.Component {
     if(text != ""){
       QRCode.toDataURL(text)
         .then(url => {
-          console.log(url);
           this.setState({
               qrcodeUrl: url,
           });
         })
         .catch(err => {
           console.error(err)
-        })
+        });
+
+      QRCode.toCanvas(text, {type:'svg'},(err,canvas)=>{
+        // console.log(type(canvas));
+        this.setState({
+            qrcodeCanvas: canvas,
+        });
+      });
     }else {
       this.setState({
           qrcodeUrl: "",
@@ -80,7 +89,7 @@ class App extends React.Component {
                 <Editor textToConvert={this.handleTextToConvert.bind(this)}/>
               </div>
               <div className={"productStage " + productStageContainerClasses}>
-                <ProductStage qrcodeUrl={this.state.qrcodeUrl}/>
+                <ProductStage qrcodeUrl={this.state.qrcodeUrl} qrcodeCanvas={this.state.qrcodeCanvas}/>
               </div>
             </div>
           </div>
