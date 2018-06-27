@@ -3,7 +3,6 @@ import '../assets/css/styles.css';
 
 // Modules
 import React, { Component } from 'react';
-import QRCode from 'qrcode';
 
 // Components
 import NavigationBar from './NavigationBar';
@@ -37,33 +36,19 @@ class App extends React.Component {
         nextStage : this.nextStage,
         prevStage : this.prevStage,
       },
-      qrcodeUrl: "",
-      qrcodeCanvas: {},
+      qrcodeString:"",
     }
   }
 
   handleTextToConvert(text){
     // Handle textToConvert
     if(text != ""){
-      QRCode.toDataURL(text)
-        .then(url => {
-          this.setState({
-              qrcodeUrl: url,
-          });
-        })
-        .catch(err => {
-          console.error(err)
-        });
-
-      QRCode.toCanvas(text, {type:'svg'},(err,canvas)=>{
-        // console.log(type(canvas));
-        this.setState({
-            qrcodeCanvas: canvas,
-        });
+      this.setState({
+        qrcodeString: text,
       });
     }else {
       this.setState({
-          qrcodeUrl: "",
+          qrcodeString: "",
       });
     }
   }
@@ -73,9 +58,9 @@ class App extends React.Component {
   }
 
   render() {
-    let productStageContainerClasses = this.state.qrcodeUrl == "" ? "hide" : "container";
-    let editorContainerClasses = this.state.stage == 0 ? "container" : "column";
-    let bodyContainerClasses = this.state.stage == 0 ? "" : "columns";
+    let productStageContainerClasses  =  this.state.qrcodeString == "" ? "hide"      : "container";
+    let editorContainerClasses        =  this.state.stage        == 0  ? "container" : "column";
+    let bodyContainerClasses          =  this.state.stage        == 0  ? ""          : "columns";
     return (
       <div>
         <NavigationBar  />
@@ -83,13 +68,13 @@ class App extends React.Component {
           <Progressbar />
 
           <div className="container">
-            {/* <div className={bodyContainerClasses}> */}
               <div className="">
               <div className={editorContainerClasses}>
                 <Editor textToConvert={this.handleTextToConvert.bind(this)}/>
               </div>
               <div className={"productStage " + productStageContainerClasses}>
-                <ProductStage qrcodeUrl={this.state.qrcodeUrl} qrcodeCanvas={this.state.qrcodeCanvas}/>
+                <br />
+                <ProductStage qrcodeString={this.state.qrcodeString}  />
               </div>
             </div>
           </div>

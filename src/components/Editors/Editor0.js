@@ -36,7 +36,6 @@ class Editor0 extends React.Component {
     setTimeout(animate, 1000);
   }
 
-
   render() {
     return (
       <div>
@@ -46,7 +45,7 @@ class Editor0 extends React.Component {
             Encode a message or a website
           </div>
           <div className="control has-icons-left has-icons-right" >
-            <input className="input is-large is-rounded" onChange={this.inputChangeHandler.bind(this)} type="text" placeholder="https:// " />
+            <input className="input is-large is-rounded " maxLength="2953" onChange={this.inputChangeHandler.bind(this)} type="text" placeholder="https:// " />
             <span className="icon is-medium is-left">
               <i className="fas fa-qrcode"></i>
             </span>
