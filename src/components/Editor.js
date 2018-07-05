@@ -9,15 +9,14 @@ class Editor extends React.Component {
 
   }
 
-  handleTextToConvert(text){ this.props.textToConvert(text); }
+  handleTextToConvertJS(text){ this.props.textToConvertJS(text); }
+
+  handleTextToConvertAPI(text){ this.props.textToConvertAPI(text); }
 
   shouldComponentUpdate(nextProps, nextState){
     return nextProps.stage != this.props.stage;
   }
 
-  componentDidMount(){
-    console.log("Editor Mounted");
-  }
 
   render() {
     let EditorForCurrentStage;
@@ -25,7 +24,9 @@ class Editor extends React.Component {
       case 0:
         EditorForCurrentStage = Editors.Editor0;
         break;
-
+      case 1:
+        EditorForCurrentStage = Editors.Editor1;
+        break;
       default:
         EditorForCurrentStage = Editors.Editor0;
 
@@ -33,8 +34,13 @@ class Editor extends React.Component {
     // might not be necessary
     EditorForCurrentStage = withStageContext(EditorForCurrentStage);
     return (
-      <div id="Editor" className={"container " + "stage"+this.props.stage} >
-        <EditorForCurrentStage textToConvert={this.handleTextToConvert.bind(this)} />
+      <div id="Editor" className={"container " + "stage" + this.props.stage} style={{maxWidth:"100vw"}} >
+        <EditorForCurrentStage  textToConvertJS={this.handleTextToConvertJS.bind(this)}
+                                textToConvertAPI={this.handleTextToConvertAPI.bind(this)}
+                                stage1ButtonAppear={this.props.stage1ButtonAppear}
+                                stage1ButtonDisappear={this.props.stage1ButtonDisappear}
+                              />
+        {/* <button type="button" onClick={this.props.nextStage}>next stage</button> */}
       </div>
     );
   }

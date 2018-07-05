@@ -27,8 +27,8 @@ class NavigationBar extends React.Component {
           </div>
         </nav>
         {/* Big Banner */}
-        <section className="hero">
-          <div className="hero-body">
+        <section className="" >
+            <br />
             <div className="container has-text-grey-dark	">
               <h1 className="title">
                 Animated Code Made Easy Generator
@@ -37,7 +37,7 @@ class NavigationBar extends React.Component {
                 Nothing to explain! Just try it out below.
               </h2>
             </div>
-          </div>
+            <br />
         </section>
       </div>
     );

@@ -3,6 +3,7 @@ import { Steps } from 'antd';
 import '../assets/css/styles.css';
 import {StageContext, withStageContext} from './Contexts/StageContext';
 
+
 let Step = Steps.Step;
 
 class Progressbar extends React.Component {
@@ -16,16 +17,19 @@ class Progressbar extends React.Component {
 
 
   render() {
+
     return (
       <div id="Progressbar" className="container">
         <div className="box">
-          <Steps>
-            {/* Needs to be funtional */}
-            <Step title="first step" />
-            <Step title="second step" />
-            <Steps.Step title="third step" />
+          <Steps current={this.props.stage}>
+
+            <Step className="step1" title='Encode' />
+            <Step title='Customize' />
+            <Step title='Animate' />
+            <Step title='Own' />
           </Steps>
         </div>
+
       </div>
     );
   }
