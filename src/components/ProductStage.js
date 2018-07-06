@@ -19,6 +19,7 @@ class ProductStage extends React.Component {
     super();
   }
 
+
   render() {
     let ProductStageForCurrentStage;
     switch (this.props.stage) {
@@ -38,7 +39,9 @@ class ProductStage extends React.Component {
                                   )));
     return (
       <div id="ProductStage" className={ "stage" + this.props.stage} >
-        <ProductStageForCurrentStage />
+        {this.props.stage == 0 && <ProductStages.ProductStage0 /> }
+        {this.props.stage == 1 && <ProductStages.ProductStage1 />}
+
       </div>
     );
   }

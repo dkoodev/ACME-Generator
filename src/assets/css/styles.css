@@ -14,8 +14,9 @@ div#Editor.stage0{
 }
 
 
+
 /* Editor0 */
-.stage0 .spacing {
+/* .stage0 .spacing {
   width:auto;
   height: 4rem;
   transition: height 1000ms;
@@ -23,6 +24,15 @@ div#Editor.stage0{
 
 .stage0 .spacing.squish {
   height: 0rem ;
+} */
+
+.editor0 .field {
+  margin-top: 5rem;
+  transition: margin-top 1000ms;
+}
+
+.editor0 .field.squish {
+  margin-top: 2rem ;
 }
 
 /* ProductStage */

@@ -1,5 +1,10 @@
+// Modules
 import React, { Component } from 'react';
 
+// Contexts
+import {withStageContext, StageContext} from '../Contexts/StageContext';
+import {withAnimationsContext, AnimationsContext} from '../Contexts/AnimationsContext';
+import {withQRCodeAPIContext, QRCodeAPIContext} from '../Contexts/QRCodeAPIContext';
 
 class Editor0 extends React.Component {
   constructor(){
@@ -7,7 +12,7 @@ class Editor0 extends React.Component {
     this.state = {
       iconRightClasses: "is-hidden",
       titleAnimations: "animated",
-      spacingAnimations: "spacing ",
+      spacingAnimations: "",
       inputControlClasses: "",
       inputStatusClasses: "",
       nextButtonDisplay: "is-hidden",
@@ -17,13 +22,13 @@ class Editor0 extends React.Component {
 
   spacingDisappear(){
     this.setState({
-      spacingAnimations:  "spacing squish",
+      spacingAnimations:  " squish ",
     });
   }
 
   spacingAppear(){
     this.setState({
-      spacingAnimations:  "spacing" ,
+      spacingAnimations:  "" ,
     });
   }
 
@@ -113,9 +118,8 @@ class Editor0 extends React.Component {
 
   render() {
     return (
-      <div className={"animated " + this.props.editor0OutAnimation} >
-        <canvas className={this.state.spacingAnimations}></canvas>
-        <div className="field" >
+      <div className={ "editor0 animated " + this.props.editor0OutAnimation}>
+        <div className={"field" + this.state.spacingAnimations} >
             <div className={"title is-2 has-text-grey-dark has-text-centered " + this.state.titleAnimations} >
               Encode a message or a website
             </div>
@@ -134,4 +138,8 @@ class Editor0 extends React.Component {
   }
 }
 
-export default Editor0;
+export default  withAnimationsContext(
+                withStageContext(
+                withQRCodeAPIContext(
+                  Editor0
+                )));

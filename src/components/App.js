@@ -44,17 +44,15 @@ class App extends React.Component {
   }
 
   triggerEditor0Out(){
+    let prevState = this.state;
+    let animationsContext = prevState.animationsContext;
+    animationsContext.editor0OutAnimation = "fadeOutLeft";
+    this.setState({
+      animationsContext : animationsContext,
+    });
     setTimeout(() => {
-      let prevState = this.state;
-      let animationsContext = prevState.animationsContext;
-      animationsContext.editor0OutAnimation = "fadeOutLeft";
-      this.setState({
-        animationsContext : animationsContext,
-      });
-      setTimeout(() => {
-        this.nextStage();
-      }, 1000);
-    }, 200);
+      this.nextStage();
+    }, 1000);
   }
 
   nextStage(){

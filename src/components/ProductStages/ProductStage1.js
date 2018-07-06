@@ -2,6 +2,11 @@
 import React, { Component } from 'react';
 import QRCode from 'qrcode.react';
 
+// Contexts
+import {withStageContext, StageContext} from '../Contexts/StageContext';
+import {withAnimationsContext, AnimationsContext} from '../Contexts/AnimationsContext';
+import {withQRCodeAPIContext, QRCodeAPIContext} from '../Contexts/QRCodeAPIContext';
+
 class ProductStage1 extends React.Component {
   constructor(){
     super();
@@ -31,4 +36,8 @@ class ProductStage1 extends React.Component {
   }
 }
 
-export default ProductStage1;
+export default  withAnimationsContext(
+                withStageContext(
+                withQRCodeAPIContext(
+                  ProductStage1
+                )));

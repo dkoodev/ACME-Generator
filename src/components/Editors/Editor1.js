@@ -1,7 +1,10 @@
+// Modules
 import React, { Component } from 'react';
 
-// import '../assets/css/styles.css';
-// import {StageContext, withStageContext} from './Contexts/StageContext';
+// Contexts
+import {withStageContext, StageContext} from '../Contexts/StageContext';
+import {withAnimationsContext, AnimationsContext} from '../Contexts/AnimationsContext';
+import {withQRCodeAPIContext, QRCodeAPIContext} from '../Contexts/QRCodeAPIContext';
 
 class Editor1 extends React.Component {
   constructor(){
@@ -49,4 +52,8 @@ class Editor1 extends React.Component {
   }
 }
 
-export default Editor1;
+export default  withAnimationsContext(
+                withStageContext(
+                withQRCodeAPIContext(
+                  Editor1
+                )));
