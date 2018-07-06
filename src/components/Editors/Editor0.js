@@ -92,16 +92,18 @@ class Editor0 extends React.Component {
     setTimeout(()=>{
       if(inputValue == this.state.textAreaInputValue){
         // Asking for QRcode only when user stops typing for 1.5 seconds
-        // this.props.textToConvertAPI(inputValue);
-        if(this.state.textAreaInputValue == ""){
-          this.checkIconRightDisappear();
-          this.textAreaGreenDisappear();
-        }else {
-          this.checkIconRightAppear();
-          this.textAreaGreenAppear();
-        }
-        this.loadingWheelDisappear();
-        this.props.stage1ButtonAppear();
+        // this.props.textToConvertAPI(inputValue)
+        //   .then(()=> {
+            if(this.state.textAreaInputValue == ""){
+              this.checkIconRightDisappear();
+              this.textAreaGreenDisappear();
+            }else {
+              this.checkIconRightAppear();
+              this.textAreaGreenAppear();
+            }
+            this.loadingWheelDisappear();
+            this.props.stage1ButtonAppear();
+          // });
       }
     }, 1500);
   }

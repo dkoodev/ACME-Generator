@@ -135,7 +135,7 @@ class App extends React.Component {
 
   render() {
     let productStageContainerClasses  =  this.state.qrcodeAPIContext.qrcodeString == "" ? "hide"      :
-                                                     this.state.stageContext.stage == 0 ? "container" : "column is-half";
+                                                    this.state.stageContext.stage == 0  ? "container" : "column is-half";
     let editorContainerClasses        =  this.state.stageContext.stage            == 0  ? "container" : "column is-half";
     let bodyContainerClasses          =  this.state.stageContext.stage            == 0  ? "container" : "columns container";
 
@@ -149,13 +149,22 @@ class App extends React.Component {
 
           <Progressbar />
           <div className={bodyContainerClasses} >
-            <div className={editorContainerClasses}>
-              <Editor />
-            </div>
+            {
+              this.state.stageContext.stage == 0 &&
+              <div className={editorContainerClasses}>
+                <Editor />
+              </div>
+            }
             <div className={"productStage " + productStageContainerClasses}>
               <br />
               <ProductStage />
             </div>
+            {
+              this.state.stageContext.stage == 1 &&
+              <div className={editorContainerClasses}>
+                <Editor />
+              </div>
+            }
           </div>
 
         </QRCodeAPIContext.Provider>
