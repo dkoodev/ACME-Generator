@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 
-// import '../assets/css/styles.css';
-// import {StageContext, withStageContext} from './Contexts/StageContext';
 
 class Editor0 extends React.Component {
   constructor(){
@@ -65,10 +63,6 @@ class Editor0 extends React.Component {
     });
   }
 
-  stage1ButtonAppear(){ this.props.stage1ButtonAppear(); }
-
-  stage1ButtonDisappear(){ this.props.stage1ButtonDisappear(); }
-
   inputChangeHandler(e){
     let inputValue = e.target.value;
 
@@ -87,7 +81,7 @@ class Editor0 extends React.Component {
     this.loadingWheelAppear();
     this.checkIconRightDisappear();
     this.textAreaGreenDisappear();
-    this.stage1ButtonDisappear();
+    this.props.stage1ButtonDisappear();
 
     // Check if typing stopped for at least 1.5 seconds
     setTimeout(()=>{
@@ -102,10 +96,11 @@ class Editor0 extends React.Component {
           this.textAreaGreenAppear();
         }
         this.loadingWheelDisappear();
-        this.stage1ButtonAppear();
+        this.props.stage1ButtonAppear();
       }
     }, 1500);
   }
+
 
   componentDidMount(){
     let animate = ()=>{
@@ -118,7 +113,7 @@ class Editor0 extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className={"animated " + this.props.editor0OutAnimation} >
         <canvas className={this.state.spacingAnimations}></canvas>
         <div className="field" >
             <div className={"title is-2 has-text-grey-dark has-text-centered " + this.state.titleAnimations} >

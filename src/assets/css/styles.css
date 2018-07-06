@@ -9,14 +9,19 @@ div#Editor.stage0{
   width: 50rem;
 }
 
+.stage1 .columns{
+  max-width: 100%;
+}
+
+
 /* Editor0 */
-.spacing {
+.stage0 .spacing {
   width:auto;
   height: 4rem;
   transition: height 1000ms;
 }
 
-.spacing.squish {
+.stage0 .spacing.squish {
   height: 0rem ;
 }
 
@@ -32,7 +37,7 @@ div#Editor.stage0{
 }
 
 @media only screen and (max-width: 600px) {
-  #qrcode-container-wrapper{
+  .stage0 #qrcode-container-wrapper{
     display: inline-block;
     width:70vw;
     margin-left:15vw;
@@ -40,19 +45,19 @@ div#Editor.stage0{
 }
 
 @media only screen and (min-width: 600px) {
-  #qrcode-container-wrapper{
+  .stage0 #qrcode-container-wrapper{
     width: 30%;
     min-width: 270px;
     margin:auto;
   }
 }
 
-.editor0-textarea{
+.stage0 .editor0-textarea{
   max-width: 80vw;
   margin: auto;
 }
 
-#stage0NextButton{
+.stage0 #stage0NextButton{
   display:block;
   width: 30%;
   min-width: 270px;

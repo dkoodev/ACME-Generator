@@ -1,9 +1,9 @@
-// CSS
-import '../assets/css/styles.css';
-
 // Modules
 import React, { Component } from 'react';
 import * as APIDriver from '../assets/js/APIDriver';
+
+// CSS
+import '../assets/css/styles.css';
 
 // Components
 import NavigationBar from './NavigationBar';
@@ -13,121 +13,157 @@ import Editor from './Editor';
 
 // Contexts
 import {withStageContext, StageContext} from './Contexts/StageContext';
+import {withAnimationsContext, AnimationsContext} from './Contexts/AnimationsContext';
+import {withQRCodeAPIContext, QRCodeAPIContext} from './Contexts/QRCodeAPIContext';
 
 class App extends React.Component {
   constructor(){
     super();
 
-    // Stage Context functions for nested components
-    this.nextStage = () => {
-      let prevState = this.state;
-      let stageContext = prevState.stageContext;
-      stageContext.stage = stageContext.stage + 1;
-      this.setState(() => ({
-        stageContext:stageContext
-      }));
-    }
-
-    this.prevStage = () => {
-      let prevState = this.state;
-      let stageContext = prevState.stageContext;
-      stageContext.stage = stageContext.stage - 1;
-      this.setState(() => ({
-        stageContext:stageContext
-      }));
-    }
-
     this.state = {
       stageContext:{
         stage : 0,
-        nextStage : this.nextStage,
-        prevStage : this.prevStage,
+        nextStage : this.nextStage.bind(this),
+        prevStage : this.prevStage.bind(this),
       },
-      productStageNextButton : "is-hidden",
-      qrcodeString:"",
-      orderId:"",
-      frameUrl:"",
+      animationsContext: {
+        stage1ButtonAppear : this.stage1ButtonAppear.bind(this),
+        stage1ButtonDisappear : this.stage1ButtonDisappear.bind(this),
+        productStageNextButtonDisplay : "is-hidden",
+        editor0OutAnimation : "",
+        triggerEditor0Out: this.triggerEditor0Out.bind(this),
+      },
+      qrcodeAPIContext:{
+        textToConvertJS: this.textToConvertJS.bind(this),
+        textToConvertAPI : this.textToConvertAPI.bind(this),
+        qrcodeString:"",
+        orderId:"",
+        frameUrl:"",
+      },
     }
   }
 
-  async handleTextToConvertJS(text){
-    // QR code generation through javascript engine
-    if(text != ""){
+  triggerEditor0Out(){
+    setTimeout(() => {
+      let prevState = this.state;
+      let animationsContext = prevState.animationsContext;
+      animationsContext.editor0OutAnimation = "fadeOutLeft";
       this.setState({
-        qrcodeString: text,
+        animationsContext : animationsContext,
       });
-    }else {
-      this.setState({
-        qrcodeString: '',
-      });
-    }
-
+      setTimeout(() => {
+        this.nextStage();
+      }, 1000);
+    }, 200);
   }
 
-  async handleTextToConvertAPI(text){
-    // QR Code generation through API
-    if(text != ""){
-      // If using ACME API for qrcode generation, orderId and frameurl is necesary.
-      this.setState({
-        qrcodeString: text,
-      });
-      // If using ACME API for qrcode generation, orderId and frameurl is necesary.
-      let orderId = await APIDriver.standardRequest(text);
-      let frameUrl = await APIDriver.fetchFrame(orderId, 1);
-      this.setState({
-        orderId: orderId,
-        frameUrl: frameUrl,
-      });
-    }else {
-      this.setState({
-        qrcodeString: '',
-        orderId: '',
-        frameUrl: '',
-      });
-    }
+  nextStage(){
+    let prevState = this.state;
+    let stageContext = prevState.stageContext;
+    stageContext.stage = stageContext.stage + 1;
+    this.setState({
+      stageContext:stageContext
+    });
+  }
+
+  prevStage(){
+    let prevState = this.state;
+    let stageContext = prevState.stageContext;
+    stageContext.stage = stageContext.stage - 1;
+    this.setState({
+      stageContext:stageContext
+    });
   }
 
   stage1ButtonAppear(){
+    let prevState = this.state;
+    let animationsContext = prevState.animationsContext;
+    animationsContext.productStageNextButtonDisplay = "fadeIn";
     this.setState({
-      productStageNextButton : "fadeIn",
+      animationsContext : animationsContext,
     });
   }
 
   stage1ButtonDisappear(){
+
+    let prevState = this.state;
+    let animationsContext = prevState.animationsContext;
+    animationsContext.productStageNextButtonDisplay = "is-disabled";
     this.setState({
-      productStageNextButton : "is-disabled",
+      animationsContext : animationsContext,
+    });
+
+  }
+
+  textToConvertJS(text){
+    // QR code generation through javascript engine
+    let prevState = this.state;
+    let qrcodeAPIContext = prevState.qrcodeAPIContext;
+    if (text == "") {
+      qrcodeAPIContext.qrcodeString = '';
+    }else{
+      qrcodeAPIContext.qrcodeString = text;
+    }
+    this.setState({
+      qrcodeAPIContext : qrcodeAPIContext,
     });
   }
 
+  async textToConvertAPI(text){
+    // QR Code generation through API
+    let prevState = this.state;
+    let qrcodeAPIContext = prevState.qrcodeAPIContext;
+
+    if(text != ""){
+      // If using ACME API for qrcode generation, orderId and frameurl is necesary.
+      this.textToConvertJS(text);
+      // If using ACME API for qrcode generation, orderId and frameurl is necesary.
+      let orderId = await APIDriver.requestPNGOnly(text);
+      let frameUrl = await APIDriver.fetchPNGOnly(orderId, 1);
+
+      qrcodeAPIContext.orderId= orderId;
+      qrcodeAPIContext.frameUrl= frameUrl;
+
+    }else {
+      qrcodeAPIContext.orderId= '';
+      qrcodeAPIContext.frameUrl= '';
+    }
+
+    this.setState({
+      qrcodeAPIContext : qrcodeAPIContext,
+    });
+  }
+
+
   render() {
-    let productStageContainerClasses  =  this.state.qrcodeString          == "" ? "hide"      : "container";
-    let editorContainerClasses        =  this.state.stageContext.stage    == 0  ? "container" : "column";
-    let bodyContainerClasses          =  this.state.stageContext.stage    == 0  ? ""          : "columns";
+    let productStageContainerClasses  =  this.state.qrcodeAPIContext.qrcodeString == "" ? "hide"      :
+                                                     this.state.stageContext.stage == 0 ? "container" : "column is-half";
+    let editorContainerClasses        =  this.state.stageContext.stage            == 0  ? "container" : "column is-half";
+    let bodyContainerClasses          =  this.state.stageContext.stage            == 0  ? "container" : "columns container";
 
     return (
-      <div>
+      <div className={"stage" + this.state.stageContext.stage}>
         <NavigationBar  />
-        <StageContext.Provider value={this.state.stageContext}>
+
+        <StageContext.Provider      value={this.state.stageContext}       >
+        <AnimationsContext.Provider value={this.state.animationsContext}  >
+        <QRCodeAPIContext.Provider  value={this.state.qrcodeAPIContext}   >
+
           <Progressbar />
-          <div className="container">
-              <div className={bodyContainerClasses}>
-              <div className={editorContainerClasses}>
-                <Editor textToConvertJS={this.handleTextToConvertJS.bind(this)}
-                        textToConvertAPI={this.handleTextToConvertAPI.bind(this)}
-                        stage1ButtonAppear={this.stage1ButtonAppear.bind(this)}
-                        stage1ButtonDisappear={this.stage1ButtonDisappear.bind(this)}
-                       />
-              </div>
-              <div className={"productStage " + productStageContainerClasses}>
-                <br />
-                <ProductStage qrcodeString={this.state.qrcodeString}
-                              frameUrl={this.state.frameUrl}
-                              nextStageButton={this.state.productStageNextButton}
-                              />
-              </div>
+          <div className={bodyContainerClasses} >
+            <div className={editorContainerClasses}>
+              <Editor />
+            </div>
+            <div className={"productStage " + productStageContainerClasses}>
+              <br />
+              <ProductStage />
             </div>
           </div>
+
+        </QRCodeAPIContext.Provider>
+        </AnimationsContext.Provider>
         </StageContext.Provider>
+
       </div>
     );
   }

@@ -1,7 +1,17 @@
-import React, { Component } from 'react';
+// CSS
 import '../assets/css/styles.css';
-import {StageContext, withStageContext} from './Contexts/StageContext';
+
+// Modules
+import React, { Component } from 'react';
+
+// Components
 import * as Editors from './Editors/';
+
+// Contexts
+import {withStageContext, StageContext} from './Contexts/StageContext';
+import {withAnimationsContext, AnimationsContext} from './Contexts/AnimationsContext';
+import {withQRCodeAPIContext, QRCodeAPIContext} from './Contexts/QRCodeAPIContext';
+
 
 class Editor extends React.Component {
   constructor(){
@@ -9,41 +19,39 @@ class Editor extends React.Component {
 
   }
 
-  handleTextToConvertJS(text){ this.props.textToConvertJS(text); }
-
-  handleTextToConvertAPI(text){ this.props.textToConvertAPI(text); }
-
   shouldComponentUpdate(nextProps, nextState){
-    return nextProps.stage != this.props.stage;
+    return (this.props.stage != nextProps.stage) || (nextProps.editor0OutAnimation == "fadeOutLeft");
   }
-
 
   render() {
     let EditorForCurrentStage;
+    let editorClasses;
     switch (this.props.stage) {
       case 0:
         EditorForCurrentStage = Editors.Editor0;
+        editorClasses = " container ";
         break;
       case 1:
         EditorForCurrentStage = Editors.Editor1;
+        editorClasses = "";
         break;
       default:
         EditorForCurrentStage = Editors.Editor0;
-
     }
-    // might not be necessary
-    EditorForCurrentStage = withStageContext(EditorForCurrentStage);
+    EditorForCurrentStage = withAnimationsContext(
+                            withStageContext(
+                            withQRCodeAPIContext(
+                              EditorForCurrentStage
+                            )));
     return (
-      <div id="Editor" className={"container " + "stage" + this.props.stage} style={{maxWidth:"100vw"}} >
-        <EditorForCurrentStage  textToConvertJS={this.handleTextToConvertJS.bind(this)}
-                                textToConvertAPI={this.handleTextToConvertAPI.bind(this)}
-                                stage1ButtonAppear={this.props.stage1ButtonAppear}
-                                stage1ButtonDisappear={this.props.stage1ButtonDisappear}
-                              />
-        {/* <button type="button" onClick={this.props.nextStage}>next stage</button> */}
+      <div id="Editor" className={editorClasses+ "stage" + this.props.stage} style={{maxWidth:"100vw"}} >
+        <EditorForCurrentStage />
       </div>
     );
   }
 }
 
-export default withStageContext(Editor);
+export default  withAnimationsContext(
+                withStageContext(
+                  Editor
+                ));

@@ -1,43 +1,51 @@
-import React, { Component } from 'react';
+// CSS
 import '../assets/css/styles.css';
-import {StageContext, withStageContext} from './Contexts/StageContext';
+
+// Modules
+import React, { Component } from 'react';
 import QRCode from 'qrcode.react';
+
+// Components
+import * as ProductStages from './ProductStages/';
+
+// Contexts
+import {withStageContext, StageContext} from './Contexts/StageContext';
+import {withAnimationsContext, AnimationsContext} from './Contexts/AnimationsContext';
+import {withQRCodeAPIContext, QRCodeAPIContext} from './Contexts/QRCodeAPIContext';
 
 
 class ProductStage extends React.Component {
   constructor(){
     super();
-
-  }
-
-  componentWillUpdate(){
-
-  }
-
-  stage0NextButtonOnClickHandler(){
-    this.props.nextStage();
   }
 
   render() {
-
-    let nextStageButtonClasses = "";
-    let nextStageButtonAttr = "";
-    nextStageButtonAttr = this.props.nextStageButton == "is-disabled" ? "disabled" : "";
-    // nextStageButtonClasses = this.props.nextStageButton != "is-disabled" ? "" : "";
-
+    let ProductStageForCurrentStage;
+    switch (this.props.stage) {
+      case 0:
+        ProductStageForCurrentStage = ProductStages.ProductStage0;
+        break;
+      case 1:
+        ProductStageForCurrentStage = ProductStages.ProductStage1;
+        break;
+      default:
+        ProductStageForCurrentStage = ProductStages.ProductStage0;
+    }
+    ProductStageForCurrentStage = withAnimationsContext(
+                                  withStageContext(
+                                  withQRCodeAPIContext(
+                                    ProductStageForCurrentStage
+                                  )));
     return (
-      <div id="ProductStage" >
-          <div id="qrcode-container-wrapper" >
-            <div id="qrcode-container" className="box " >
-              <QRCode value={this.props.qrcodeString} style={{  width:"100%", height:"100%", margin:"auto" }} renderAs="svg" size={300} />
-              {/* <img src={this.props.frameUrl} style={{width:"100%",height:"100%", margin:"auto"}} /> */}
-            </div>
-            <a id="stage0NextButton" onClick={this.stage0NextButtonOnClickHandler.bind(this)} className={"button is-link animated " } disabled={nextStageButtonAttr}>Customize</a>
-          </div>
-
+      <div id="ProductStage" className={ "stage" + this.props.stage} >
+        <ProductStageForCurrentStage />
       </div>
     );
   }
 }
 
-export default withStageContext(ProductStage);
+export default  withAnimationsContext(
+                withStageContext(
+                withQRCodeAPIContext(
+                  ProductStage
+                )));
