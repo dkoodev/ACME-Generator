@@ -1,5 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 
 // Config directories
 const SRC_DIR = path.resolve(__dirname, 'src');
@@ -15,6 +17,10 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /\.html$/,
+        loader: 'html-loader'
+      },
       {
         test: /\.css$/,
         loader:[ 'style-loader', 'css-loader' ],
@@ -66,6 +72,11 @@ module.exports = {
     filename: 'bundle.js'
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      // hash: true,
+      template: SRC_DIR + '/index.html',
+      filename: OUTPUT_DIR + '/index.html' //relative to root of the application
+    })
   ],
   devServer: {
     contentBase: './dist'
