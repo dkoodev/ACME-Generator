@@ -7,6 +7,7 @@ export const QRCodeAPIContext = React.createContext(
     qrcodeString:"",
     orderId:"",
     frameUrl:"",
+    requestStaticWithColor:()=>{},
   }
 );
 
@@ -15,14 +16,14 @@ export const withQRCodeAPIContext = (Component) => {
     return (
       <QRCodeAPIContext.Consumer>
         {
-          ({textToConvertJS, textToConvertAPI, qrcodeString, orderId, frameUrl}) =>
+          ({textToConvertJS, textToConvertAPI, qrcodeString, orderId, frameUrl,requestStaticWithColor}) =>
             <Component {...props}
               textToConvertJS={textToConvertJS}
               textToConvertAPI={textToConvertAPI}
               qrcodeString={qrcodeString}
               orderId={orderId}
               frameUrl={frameUrl}
-
+              requestStaticWithColor={requestStaticWithColor}
             />
         }
       </QRCodeAPIContext.Consumer>

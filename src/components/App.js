@@ -31,22 +31,40 @@ class App extends React.Component {
         stage1ButtonDisappear : this.stage1ButtonDisappear.bind(this),
         productStageNextButtonDisplay : "is-hidden",
         editor0OutAnimation : "",
-        triggerEditor0Out: this.triggerEditor0Out.bind(this),
+        productStage0OutAnimation : "",
+        stageTransition0_1: this.stageTransition0_1.bind(this),
       },
       qrcodeAPIContext:{
         textToConvertJS: this.textToConvertJS.bind(this),
         textToConvertAPI : this.textToConvertAPI.bind(this),
-        qrcodeString:"",
+        qrcodeString: "Changethislater",
         orderId:"",
         frameUrl:"",
+        requestStaticWithColor: this.requestStaticWithColor.bind(this),
       },
     }
   }
 
-  triggerEditor0Out(){
+  async requestStaticWithColor(backgroundColor, pixelColor){
+    let prevState = this.state;
+    let qrcodeAPIContext = prevState.qrcodeAPIContext;
+
+    let orderId = await APIDriver.requestPNGOnlyWithColor(this.state.qrcodeAPIContext.qrcodeString, backgroundColor, pixelColor);
+    let frameUrl = await APIDriver.fetchPNGOnly(orderId, 1);
+
+    qrcodeAPIContext.orderId= orderId;
+    qrcodeAPIContext.frameUrl= frameUrl;
+
+    this.setState({
+      qrcodeAPIContext : qrcodeAPIContext,
+    });
+  }
+
+  stageTransition0_1(){
     let prevState = this.state;
     let animationsContext = prevState.animationsContext;
     animationsContext.editor0OutAnimation = "fadeOutLeft";
+    animationsContext.productStage0OutAnimation = "fadeOutLeft";
     this.setState({
       animationsContext : animationsContext,
     });
@@ -137,7 +155,7 @@ class App extends React.Component {
     let productStageContainerClasses  =  this.state.qrcodeAPIContext.qrcodeString == "" ? "hide"      :
                                                     this.state.stageContext.stage == 0  ? "container" : "column is-half";
     let editorContainerClasses        =  this.state.stageContext.stage            == 0  ? "container" : "column is-half";
-    let bodyContainerClasses          =  this.state.stageContext.stage            == 0  ? "container" : "columns container";
+    let bodyContainerClasses          =  this.state.stageContext.stage            == 0  ? "container" : "columns container is-centered";
 
     return (
       <div className={"stage" + this.state.stageContext.stage}>
@@ -147,25 +165,28 @@ class App extends React.Component {
         <AnimationsContext.Provider value={this.state.animationsContext}  >
         <QRCodeAPIContext.Provider  value={this.state.qrcodeAPIContext}   >
 
-          <Progressbar />
-          <div className={bodyContainerClasses} >
-            {
-              this.state.stageContext.stage == 0 &&
-              <div className={editorContainerClasses}>
-                <Editor />
-              </div>
-            }
-            <div className={"productStage " + productStageContainerClasses}>
-              <br />
-              <ProductStage />
+        <Progressbar />
+
+        <div id="body_container" className={bodyContainerClasses} >
+          {
+            this.state.stageContext.stage == 0 &&
+            <div className={editorContainerClasses}>
+              <Editor />
             </div>
-            {
-              this.state.stageContext.stage == 1 &&
-              <div className={editorContainerClasses}>
-                <Editor />
-              </div>
-            }
+          }
+
+          <div className={"productStage " + productStageContainerClasses}>
+            <br />
+            <ProductStage />
           </div>
+
+          {
+            this.state.stageContext.stage == 1 &&
+            <div className={editorContainerClasses}>
+              <Editor />
+            </div>
+          }
+        </div>
 
         </QRCodeAPIContext.Provider>
         </AnimationsContext.Provider>

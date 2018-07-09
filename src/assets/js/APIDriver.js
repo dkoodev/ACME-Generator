@@ -45,7 +45,7 @@ export const fetchFrame = (orderNumber, frameNumber) => {
 export const requestPNGOnly = (text) => {
   console.log("Requesting pngonly");
   let url = "https://api.acme.codes/new?msg=" + encodeURI(text)
-  + "&anim=staticCodeOnly&gif=0";
+  + "&anim=staticCodeOnly&xres=400&yres=400&gif=0";
   return fetch(url)
     .then((response)=>{
       return response.json();
@@ -72,4 +72,28 @@ export const fetchPNGOnly = (orderNumber, frameNumber) => {
         return response.url;
       }
     })
+}
+
+export const requestPNGOnlyWithColor = (text, backgroundColor, pixelColor) => {
+  console.log("Requesting pngonly");
+  let url = "https://api.acme.codes/new?msg=" + encodeURI(text)
+  + "&anim=staticCodeOnly&xres=400&yres=400&gif=0";
+
+  console.log("text:",text, " backgroundColor:", backgroundColor, " pixelColor:" ,pixelColor);
+
+  if (backgroundColor != "") {
+    url += "&bgpColor=" + backgroundColor;
+  }
+
+  if (pixelColor != "") {
+    url += "&pixelColor=" + pixelColor;
+  }
+
+  return fetch(url)
+    .then((response)=>{
+      return response.json();
+    })
+    .then((json)=>{
+      return json.orderNumber;
+    });
 }

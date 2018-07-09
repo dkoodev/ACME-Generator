@@ -6,6 +6,9 @@ import {withStageContext, StageContext} from '../Contexts/StageContext';
 import {withAnimationsContext, AnimationsContext} from '../Contexts/AnimationsContext';
 import {withQRCodeAPIContext, QRCodeAPIContext} from '../Contexts/QRCodeAPIContext';
 
+// Components
+import { Tooltip } from 'antd';
+
 class Editor0 extends React.Component {
   constructor(){
     super();
@@ -92,8 +95,8 @@ class Editor0 extends React.Component {
     setTimeout(()=>{
       if(inputValue == this.state.textAreaInputValue){
         // Asking for QRcode only when user stops typing for 1.5 seconds
-        // this.props.textToConvertAPI(inputValue)
-        //   .then(()=> {
+        this.props.textToConvertAPI(inputValue)
+          .then(()=> {
             if(this.state.textAreaInputValue == ""){
               this.checkIconRightDisappear();
               this.textAreaGreenDisappear();
@@ -103,7 +106,7 @@ class Editor0 extends React.Component {
             }
             this.loadingWheelDisappear();
             this.props.stage1ButtonAppear();
-          // });
+          });
       }
     }, 1500);
   }
@@ -119,6 +122,7 @@ class Editor0 extends React.Component {
   }
 
   render() {
+
     return (
       <div className={ "editor0 animated " + this.props.editor0OutAnimation}>
         <div className={"field" + this.state.spacingAnimations} >
@@ -126,7 +130,9 @@ class Editor0 extends React.Component {
               Encode a message or a website
             </div>
           <div className={"editor0-textarea control has-icons-left has-icons-right is-large " + this.state.inputControlClasses} >
-            <input className={"input is-large is-rounded " + this.state.inputStatusClasses} maxLength="2953" onChange={this.inputChangeHandler.bind(this)} type="text" placeholder="https:// " />
+            <Tooltip title="Enter text or link to encode" placement="left" mouseLeaveDelay={0}>
+              <input className={"input is-large is-rounded " + this.state.inputStatusClasses} maxLength="2953" onChange={this.inputChangeHandler.bind(this)} type="text" placeholder="https:// " />
+            </Tooltip>
             <span className="icon is-medium is-left">
               <i className="fas fa-qrcode"></i>
             </span>

@@ -12,11 +12,6 @@ class ProductStage1 extends React.Component {
     super();
   }
 
-  async stage0NextButtonOnClickHandler(){
-    this.props.triggerEditor0Out();
-
-  }
-
   render() {
     let nextStageButtonClasses = "";
     let nextStageButtonAttr = "";
@@ -24,11 +19,12 @@ class ProductStage1 extends React.Component {
 
     return (
       <div id="ProductStage1" >
+        <br />
           <div id="qrcode-container-wrapper" >
             <div id="qrcode-container" className="box " >
-              <QRCode value={this.props.qrcodeString} style={{  width:"100%", height:"100%", margin:"auto" }} renderAs="svg" size={300} />
+              {/* <QRCode value={this.props.qrcodeString} style={{  width:"100%", height:"100%", margin:"auto" }} renderAs="svg" size={300} /> */}
+              <img src={this.props.frameUrl} style={{width:"100%",height:"100%", margin:"auto"}} />
             </div>
-            <a id="stage1NextButton" onClick={this.stage0NextButtonOnClickHandler.bind(this)} className={"button is-link animated " } disabled={nextStageButtonAttr}>Animate</a>
           </div>
 
       </div>

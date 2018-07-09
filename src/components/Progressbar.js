@@ -9,27 +9,19 @@ let Step = Steps.Step;
 class Progressbar extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-
-    };
   }
 
-
   render() {
-
     return (
       <div id="Progressbar" className="container">
         <div className="box">
           <Steps current={this.props.stage}>
-
             <Step className="step1" title='Encode' />
             <Step title='Customize' />
             <Step title='Animate' />
             <Step title='Own' />
           </Steps>
         </div>
-
       </div>
     );
   }
