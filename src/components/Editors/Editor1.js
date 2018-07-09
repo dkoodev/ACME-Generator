@@ -41,7 +41,7 @@ class Editor1 extends React.Component {
     this.setState({ chosePixelColor: colorInHex });
     setTimeout(()=>{
       if(colorInHex == this.state.chosePixelColor){
-        this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosePixelColor);
+        this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
       }
     }, 1000);
   }
@@ -49,7 +49,7 @@ class Editor1 extends React.Component {
   colorCompleteBackground(color){
     let colorInHex = color.hex.replace('#','');
     this.setState({ chosenBackgroundColor: colorInHex });
-    this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosePixelColor);
+    this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
   }
 
   componentDidMount(){
