@@ -86,7 +86,7 @@ div#Editor.stage0{
 
 .stage0 #stage0NextButton{
   display: block;
-  width: 30%;
+  width: 100%;
   min-width: 270px;
   margin: auto;
 }

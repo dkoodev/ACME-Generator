@@ -32,24 +32,28 @@ class Editor1 extends React.Component {
     return false;
   }
 
-  inputChangeHandler(e){
 
-  }
+  pixelColorChangeComplete(color){
+    console.log("colorCompletePixel");
 
-  colorCompletePixel(color){
     let colorInHex = color.hex.replace('#','');
-    this.setState({ chosePixelColor: colorInHex });
+    this.setState({ chosenPixelColor: colorInHex });
     setTimeout(()=>{
-      if(colorInHex == this.state.chosePixelColor){
+      if(colorInHex == this.state.chosenPixelColor){
         this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
       }
     }, 1000);
   }
 
-  colorCompleteBackground(color){
+  backgroundColorChangeComplete(color){
+    console.log("colorCompleteBackground");
     let colorInHex = color.hex.replace('#','');
     this.setState({ chosenBackgroundColor: colorInHex });
-    this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
+    setTimeout(()=>{
+      if(colorInHex == this.state.chosenBackgroundColor){
+        this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
+      }
+    }, 1000);
   }
 
   componentDidMount(){
@@ -70,7 +74,7 @@ class Editor1 extends React.Component {
 
           Choose Pixel Color
           <SliderPicker
-            onChangeComplete={ this.colorCompletePixel.bind(this) }
+            onChangeComplete={ this.pixelColorChangeComplete.bind(this) }
           />
           <br />
           <br />
@@ -78,7 +82,7 @@ class Editor1 extends React.Component {
 
           Choose Background Color
           <SliderPicker
-            onChangeComplete={ this.colorCompleteBackground.bind(this) }
+            onChangeComplete={ this.backgroundColorChangeComplete.bind(this) }
           />
 
           <br />
