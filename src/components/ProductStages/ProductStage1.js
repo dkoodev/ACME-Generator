@@ -7,26 +7,42 @@ import {withStageContext, StageContext} from '../Contexts/StageContext';
 import {withAnimationsContext, AnimationsContext} from '../Contexts/AnimationsContext';
 import {withQRCodeAPIContext, QRCodeAPIContext} from '../Contexts/QRCodeAPIContext';
 
+// Components
+import CustomTag from '../CustomTag';
+import CustomTags from '../CustomTags';
+
 class ProductStage1 extends React.Component {
   constructor(){
     super();
   }
 
-  render() {
-    let nextStageButtonClasses = "";
-    let nextStageButtonAttr = "";
-    nextStageButtonAttr = this.props.productStageNextButtonDisplay == "is-disabled" ? "disabled" : "";
 
+  render() {
+    let tags = [
+      {
+        type:"message",
+        tagInfo: this.props.frameUrl
+      },
+      {
+        type:"backgroundColor",
+        tagInfo: this.props.chosenBackgroundColor
+      },
+      {
+        type:"pixelColor",
+        tagInfo: this.props.chosenPixelColor
+      }
+    ];
     return (
-      <div id="ProductStage1" >
-        <br />
-          <div id="qrcode-container-wrapper" >
+
+      <div id="ProductStage1" className="columns" >
+          <div id="qrcode-container-wrapper" className="column">
             <div id="qrcode-container" className="box " >
-              {/* <QRCode value={this.props.qrcodeString} style={{  width:"100%", height:"100%", margin:"auto" }} renderAs="svg" size={300} /> */}
               <img src={this.props.frameUrl} style={{width:"100%",height:"100%", margin:"auto"}} />
             </div>
           </div>
-
+          <div className="column is-one-fifth">
+            <CustomTags tags={tags} />
+          </div>
       </div>
     );
   }

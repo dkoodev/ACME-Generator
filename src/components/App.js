@@ -27,22 +27,43 @@ class App extends React.Component {
         prevStage : this.prevStage.bind(this),
       },
       animationsContext: {
-        stage1ButtonAppear : this.stage1ButtonAppear.bind(this),
-        stage1ButtonDisappear : this.stage1ButtonDisappear.bind(this),
-        productStageNextButtonDisplay : "is-hidden",
-        editor0OutAnimation : "",
-        productStage0OutAnimation : "",
+        nextButtonAppear : this.nextButtonAppear.bind(this),
+        nextButtonDisappear : this.nextButtonDisappear.bind(this),
+        productStageNextButtonDisplay : "is-disabled",
         stageTransition0_1: this.stageTransition0_1.bind(this),
+        stageTransitionAnimations: "",
       },
       qrcodeAPIContext:{
         textToConvertJS: this.textToConvertJS.bind(this),
         textToConvertAPI : this.textToConvertAPI.bind(this),
-        qrcodeString: "Changethislater",
+        qrcodeString: "",
         orderId:"",
         frameUrl:"",
+        chosenPixelColor:"",
+        changePixelColor:this.changePixelColor.bind(this),
+        chosenBackgroundColor:"",
+        changeBackgroundColor: this.changeBackgroundColor.bind(this),
         requestStaticWithColor: this.requestStaticWithColor.bind(this),
       },
     }
+  }
+
+  changePixelColor(color){
+    let prevState = this.state;
+    let qrcodeAPIContext = prevState.qrcodeAPIContext;
+    qrcodeAPIContext.chosenPixelColor = color;
+    this.setState({
+      qrcodeAPIContext : qrcodeAPIContext,
+    });
+  }
+
+  changeBackgroundColor(color){
+    let prevState = this.state;
+    let qrcodeAPIContext = prevState.qrcodeAPIContext;
+    qrcodeAPIContext.chosenBackgroundColor = color;
+    this.setState({
+      qrcodeAPIContext : qrcodeAPIContext,
+    });
   }
 
   async requestStaticWithColor(backgroundColor, pixelColor){
@@ -63,15 +84,23 @@ class App extends React.Component {
   stageTransition0_1(){
     let prevState = this.state;
     let animationsContext = prevState.animationsContext;
-    animationsContext.editor0OutAnimation = "fadeOutLeft";
-    animationsContext.productStage0OutAnimation = "fadeOutLeft";
+    animationsContext.bodyStageTransitionAnimations = "fadeOutLeft";
     this.setState({
       animationsContext : animationsContext,
     });
     setTimeout(() => {
       this.nextStage();
+      setTimeout(()=> {
+        prevState = this.state;
+        animationsContext = prevState.animationsContext;
+        animationsContext.bodyStageTransitionAnimations = "fadeInRight";
+        this.setState({
+          animationsContext : animationsContext,
+        });
+      }, 200);
     }, 1000);
   }
+
 
   nextStage(){
     let prevState = this.state;
@@ -91,7 +120,7 @@ class App extends React.Component {
     });
   }
 
-  stage1ButtonAppear(){
+  nextButtonAppear(){
     let prevState = this.state;
     let animationsContext = prevState.animationsContext;
     animationsContext.productStageNextButtonDisplay = "fadeIn";
@@ -100,7 +129,7 @@ class App extends React.Component {
     });
   }
 
-  stage1ButtonDisappear(){
+  nextButtonDisappear(){
 
     let prevState = this.state;
     let animationsContext = prevState.animationsContext;
@@ -156,7 +185,6 @@ class App extends React.Component {
                                                     this.state.stageContext.stage == 0  ? "container" : "column is-half";
     let editorContainerClasses        =  this.state.stageContext.stage            == 0  ? "container" : "column is-half";
     let bodyContainerClasses          =  this.state.stageContext.stage            == 0  ? "container" : "columns container is-centered";
-
     return (
       <div className={"stage" + this.state.stageContext.stage}>
         <NavigationBar  />
@@ -167,7 +195,7 @@ class App extends React.Component {
 
         <Progressbar />
 
-        <div id="body_container" className={bodyContainerClasses} >
+        <div id="body_container" className={"animated " + bodyContainerClasses + " " + this.state.animationsContext.bodyStageTransitionAnimations} >
           {
             this.state.stageContext.stage == 0 &&
             <div className={editorContainerClasses}>
@@ -181,8 +209,10 @@ class App extends React.Component {
           </div>
 
           {
+
             this.state.stageContext.stage == 1 &&
             <div className={editorContainerClasses}>
+              <br />
               <Editor />
             </div>
           }

@@ -20,9 +20,6 @@ class Editor1 extends React.Component {
       spacingAnimations: "spacing ",
       inputControlClasses: "",
       inputStatusClasses: "",
-    }
-
-    this.state = {
       chosenPixelColor: '',
       chosenBackgroundColor: '',
     };
@@ -34,10 +31,9 @@ class Editor1 extends React.Component {
 
 
   pixelColorChangeComplete(color){
-    console.log("colorCompletePixel");
-
     let colorInHex = color.hex.replace('#','');
     this.setState({ chosenPixelColor: colorInHex });
+    this.props.changePixelColor(colorInHex);
     setTimeout(()=>{
       if(colorInHex == this.state.chosenPixelColor){
         this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
@@ -46,8 +42,8 @@ class Editor1 extends React.Component {
   }
 
   backgroundColorChangeComplete(color){
-    console.log("colorCompleteBackground");
     let colorInHex = color.hex.replace('#','');
+    this.props.changeBackgroundColor(colorInHex);
     this.setState({ chosenBackgroundColor: colorInHex });
     setTimeout(()=>{
       if(colorInHex == this.state.chosenBackgroundColor){

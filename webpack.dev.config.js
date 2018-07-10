@@ -68,12 +68,12 @@ module.exports = {
   },
   output: {
     path: OUTPUT_DIR,
-    publicPath: './',
+    publicPath: '/',
     filename: 'bundle.js'
   },
   plugins: [
     new HtmlWebpackPlugin({
-      // hash: true,
+      hash: true,
       template: SRC_DIR + '/index.html',
       filename: OUTPUT_DIR + '/index.html' //relative to root of the application
     })

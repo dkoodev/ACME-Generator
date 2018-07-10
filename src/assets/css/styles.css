@@ -18,6 +18,12 @@ div#Editor.stage0{
   margin:auto;
 }
 
+
+.stage1 #qrcode-container{
+  margin:0;
+  /* display:inline-block; */
+}
+
 /* Editor1 */
 
 .editor1.container{
@@ -37,7 +43,7 @@ div#Editor.stage0{
 } */
 
 .editor0 .field {
-  margin-top: 5rem;
+  margin-top: 6rem;
   transition: margin-top 1000ms;
 }
 
@@ -74,7 +80,7 @@ div#Editor.stage0{
   }
 
   .stage1 #qrcode-container-wrapper{
-    display: block;
+    display: inline-block;
     width: 30vw;
   }
 }
@@ -90,3 +96,21 @@ div#Editor.stage0{
   min-width: 270px;
   margin: auto;
 }
+
+.customTagWrapper{
+  position: relative;
+}
+
+.customTag {
+  display:inline;
+  margin:0;
+  width:auto;
+  height:auto;
+  padding:0;
+  position: absolute;
+}
+
+/*
+#ProductStage1 {
+  margin-top: 3rem;
+} */

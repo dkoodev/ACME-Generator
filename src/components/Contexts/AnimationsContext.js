@@ -2,12 +2,11 @@ import React from 'react';
 
 export const AnimationsContext = React.createContext(
   {
-    stage1ButtonAppear: () => {},
-    stage1ButtonDisappear: () => {},
+    nextButtonAppear: () => {},
+    nextButtonDisappear: () => {},
     productStageNextButtonDisplay: "",
-    editor0OutAnimation: "" ,
-    productStage0OutAnimation : "",
     stageTransition0_1: () => {},
+    stageTransitionAnimations: "",
   }
 );
 
@@ -16,20 +15,18 @@ export const withAnimationsContext = (Component) => {
     return (
       <AnimationsContext.Consumer>
         {
-          ({stage1ButtonAppear,
-            stage1ButtonDisappear,
+          ({nextButtonAppear,
+            nextButtonDisappear,
             productStageNextButtonDisplay,
-            editor0OutAnimation,
-            productStage0OutAnimation,
-            stageTransition0_1
+            stageTransition0_1,
+            stageTransitionAnimations
             }) =>
             <Component {...props}
-              stage1ButtonAppear={stage1ButtonAppear}
-              stage1ButtonDisappear={stage1ButtonDisappear}
+              nextButtonAppear={nextButtonAppear}
+              nextButtonDisappear={nextButtonDisappear}
               productStageNextButtonDisplay={productStageNextButtonDisplay}
-              editor0OutAnimation={editor0OutAnimation}
-              productStage0OutAnimation={productStage0OutAnimation}
               stageTransition0_1={stageTransition0_1}
+              stageTransitionAnimations={stageTransitionAnimations}
             />
         }
       </AnimationsContext.Consumer>

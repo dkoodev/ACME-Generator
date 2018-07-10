@@ -89,7 +89,7 @@ class Editor0 extends React.Component {
     this.loadingWheelAppear();
     this.checkIconRightDisappear();
     this.textAreaGreenDisappear();
-    this.props.stage1ButtonDisappear();
+    this.props.nextButtonDisappear();
 
     // Check if typing stopped for at least 1.5 seconds
     setTimeout(()=>{
@@ -105,7 +105,7 @@ class Editor0 extends React.Component {
               this.textAreaGreenAppear();
             }
             this.loadingWheelDisappear();
-            this.props.stage1ButtonAppear();
+            this.props.nextButtonAppear();
           });
       }
     }, 1500);
@@ -124,7 +124,7 @@ class Editor0 extends React.Component {
   render() {
 
     return (
-      <div className={ "editor0 animated " + this.props.editor0OutAnimation}>
+      <div className={ "editor0 "}>
         <div className={"field" + this.state.spacingAnimations} >
             <div className={"title is-2 has-text-grey-dark has-text-centered " + this.state.titleAnimations} >
               Encode a message or a website

@@ -13,12 +13,15 @@ class NextButton extends React.Component {
   }
 
   stage0NextButtonOnClickHandler(){
+    this.props.nextButtonDisappear();
     setTimeout(()=>{
       this.props.stageTransition0_1();
     }, 200);
   }
 
   stage1NextButtonOnClickHandler(){
+    this.props.nextButtonDisappear();
+
     setTimeout(()=>{
       this.props.stageTransition0_1();
     }, 200);
