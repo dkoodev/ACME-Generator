@@ -67,7 +67,6 @@ class Editor1 extends React.Component {
     }, 1000);
   }
 
-
   render() {
     return (
       <div className="editor1 container ">

@@ -22,7 +22,7 @@ class App extends React.Component {
 
     this.state = {
       stageContext:{
-        stage : 0,
+        stage : 1,
         nextStage : this.nextStage.bind(this),
         prevStage : this.prevStage.bind(this),
       },
@@ -42,7 +42,7 @@ class App extends React.Component {
       qrcodeAPIContext:{
         textToConvertJS: this.textToConvertJS.bind(this),
         textToConvertAPI : this.textToConvertAPI.bind(this),
-        qrcodeString: "",
+        qrcodeString: "change this please",
         orderId:"",
         frameUrl:"",
         chosenPixelColor:"",

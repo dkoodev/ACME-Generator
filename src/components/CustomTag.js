@@ -1,11 +1,13 @@
 // Modules
 import React, { Component } from 'react';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // Components
 import {Tooltip} from 'antd';
+import { square } from '@fortawesome/free-solid-svg-icons'
 
 // Contexts
 import {withAnimationsContext, AnimationsContext} from './Contexts/AnimationsContext';
+
 
 
 class CustomTag extends React.Component {
@@ -14,22 +16,24 @@ class CustomTag extends React.Component {
   }
 
   render() {
+    console.log("Rerendering customtag:" , this.props.type);
     let toolTipTitle = (this.props.type == "backgroundColor" ||
-                      this.props.type == "pixelColor" ) ?  ("#" + this.props.tagInfo ): this.props.tagInfo;
+                      this.props.type == "pixelColor" ) ?  ("#" + this.props.tagInfo ) : this.props.tagInfo;
+    console.log(toolTipTitle);
+
     return (
       <Tooltip className="customTagWrapper" title={toolTipTitle} placement="right" mouseLeaveDelay={0}>
         <div id={"customTag" + this.props.id} className="customTag control">
           {
             this.props.type == "message" &&
-            <div className="tags has-addons">
-
-              <span className="tag">URL</span>
-              <a href={toolTipTitle}>
+            <a href={toolTipTitle}>
+              <div className="tags has-addons">
+                <span className="tag">URL</span>
                 <span className="tag is-link">
                   <i className="fas fa-link"></i>
                 </span>
-              </a>
-            </div>
+              </div>
+            </a>
           }
           {
             this.props.type == "backgroundColor" &&
@@ -41,7 +45,7 @@ class CustomTag extends React.Component {
                 </div>
               }
               <span className="tag">Background Color</span>
-              <span className="tag is-primary" style={{backgroundColor:toolTipTitle}}>
+              <span className="tag is-primary" style={{ backgroundColor: toolTipTitle }}>
                 <i className="fas fa-square"></i>
               </span>
             </div>
@@ -57,7 +61,9 @@ class CustomTag extends React.Component {
               }
               <span className="tag">Pixel Color</span>
               <span className="tag " >
-                <i className="fas fa-th" style={{color:toolTipTitle}}></i>
+                {/* <i className="fas fa-square"  ></i> */}
+                <FontAwesomeIcon icon="square" style={{ color : toolTipTitle }} />
+
               </span>
             </div>
           }
