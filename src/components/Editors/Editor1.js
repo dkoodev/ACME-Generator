@@ -22,6 +22,8 @@ class Editor1 extends React.Component {
       inputStatusClasses: "",
       chosenPixelColor: '',
       chosenBackgroundColor: '',
+      pixelColorGearLoading: false,
+      backgroundColorGearLoading: false,
     };
   }
 
@@ -32,6 +34,8 @@ class Editor1 extends React.Component {
 
   pixelColorChangeComplete(color){
     this.props.customTagPixelColorLoading();
+    this.setState({pixelColorGearLoading : true});
+
     let colorInHex = color.hex.replace('#','');
     let colorInHexBackground = this.state.chosenBackgroundColor;
 
@@ -43,14 +47,20 @@ class Editor1 extends React.Component {
       ){
         await this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
         this.props.customTagPixelColorDone();
-      }else{
-        this.props.customTagPixelColorDone();
+        this.setState({pixelColorGearLoading : false});
+
+        if (this.state.backgroundColorGearLoading) {
+          this.props.customTagBackgroundColorDone();
+          this.setState({backgroundColorGearLoading : false});
+        }
       }
     }, 1000);
   }
 
   backgroundColorChangeComplete(color){
     this.props.customTagBackgroundColorLoading();
+    this.setState({backgroundColorGearLoading : true});
+
     let colorInHex = color.hex.replace('#','');
     let colorInHexPixel = this.state.chosenPixelColor;
     this.props.changeBackgroundColor(colorInHex);
@@ -61,8 +71,12 @@ class Editor1 extends React.Component {
       ){
         await this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
         this.props.customTagBackgroundColorDone();
-      }else{
-        this.props.customTagBackgroundColorDone();
+        this.setState({backgroundColorGearLoading : false});
+
+        if (this.state.pixelColorGearLoading) {
+          this.props.customTagPixelColorDone();
+          this.setState({pixelColorGearLoading : false});
+        }
       }
     }, 1000);
   }
