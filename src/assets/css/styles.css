@@ -13,11 +13,29 @@ div#Editor.stage0{
   max-width: 100%;
 }
 
+.stage1 .productStage{
+  padding:0;
+}
+
+.stage1 .editor{
+  padding-top: 0;
+}
+
+.stage1 .editor1.container{
+  padding-top:0;
+}
+
+.stage1 .customTags{
+  padding: 12px 0 0 0;
+}
+
+.stage1 .editor1 {
+  padding: 12px 0 0 0;
+}
 
 .stage1 #body_container{
   margin:auto;
 }
-
 
 .stage1 #qrcode-container{
   margin:0;
@@ -80,8 +98,8 @@ div#Editor.stage0{
   }
 
   .stage1 #qrcode-container-wrapper{
-    display: inline-block;
-    width: 30vw;
+    width: 30%;
+    min-width: 270px;
   }
 }
 
@@ -99,18 +117,21 @@ div#Editor.stage0{
 
 .customTagWrapper{
   position: relative;
+  display: block;
 }
 
 .customTag {
-  display:inline;
+  display: block;
   margin:0;
   width:auto;
   height:auto;
   padding:0;
-  position: absolute;
 }
 
-/*
-#ProductStage1 {
-  margin-top: 3rem;
-} */
+.tags {
+  display: block;
+}
+
+.customTagWrapper{
+  margin-bottom: 2rem;
+}

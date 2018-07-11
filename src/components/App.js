@@ -32,6 +32,12 @@ class App extends React.Component {
         productStageNextButtonDisplay : "is-disabled",
         stageTransition0_1: this.stageTransition0_1.bind(this),
         stageTransitionAnimations: "",
+        customTagBackgroundColorAnimations: ["is-hidden"],
+        customTagPixelColorAnimations: ["is-hidden"],
+        customTagBackgroundColorLoading: this.customTagBackgroundColorLoading.bind(this),
+        customTagBackgroundColorDone: this.customTagBackgroundColorDone.bind(this),
+        customTagPixelColorLoading: this.customTagPixelColorLoading.bind(this),
+        customTagPixelColorDone: this.customTagPixelColorDone.bind(this),
       },
       qrcodeAPIContext:{
         textToConvertJS: this.textToConvertJS.bind(this),
@@ -47,6 +53,66 @@ class App extends React.Component {
       },
     }
   }
+
+  customTagBackgroundColorLoading(){
+    let prevState = this.state;
+    let animationsContext = prevState.animationsContext;
+    let customTagBackgroundColorAnimations = ["zoomIn","fadeIn","tag"];
+    animationsContext.customTagBackgroundColorAnimations = customTagBackgroundColorAnimations;
+
+    this.setState({
+      animationsContext : animationsContext,
+    });
+  }
+
+  customTagBackgroundColorDone(){
+    let prevState = this.state;
+    let animationsContext = prevState.animationsContext;
+    let customTagBackgroundColorAnimations = ["zoomOut","fadeout"];
+    console.log(customTagBackgroundColorAnimations, customTagBackgroundColorAnimations.join(" "));
+    animationsContext.customTagBackgroundColorAnimations = customTagBackgroundColorAnimations;
+    this.setState({
+      animationsContext : animationsContext,
+    });
+
+    setTimeout(()=>{
+      customTagBackgroundColorAnimations.push("is-hidden");
+      animationsContext.customTagBackgroundColorAnimations = customTagBackgroundColorAnimations;
+      this.setState({
+        animationsContext : animationsContext,
+      });
+    }, 300);
+  }
+
+  customTagPixelColorLoading(){
+    let prevState = this.state;
+    let animationsContext = prevState.animationsContext;
+    let customTagPixelColorAnimations = ["zoomIn","fadeIn","tag"];
+    animationsContext.customTagPixelColorAnimations = customTagPixelColorAnimations;
+
+    this.setState({
+      animationsContext : animationsContext,
+    });
+  }
+
+  customTagPixelColorDone(){
+    let prevState = this.state;
+    let animationsContext = prevState.animationsContext;
+    let customTagPixelColorAnimations = ["zoomOut","fadeout"];
+    animationsContext.customTagPixelColorAnimations = customTagPixelColorAnimations;
+    this.setState({
+      animationsContext : animationsContext,
+    });
+
+    setTimeout(()=>{
+      customTagPixelColorAnimations.push("is-hidden");
+      animationsContext.customTagPixelColorAnimations = customTagPixelColorAnimations;
+      this.setState({
+        animationsContext : animationsContext,
+      });
+    }, 300);
+  }
+
 
   changePixelColor(color){
     let prevState = this.state;
@@ -67,6 +133,8 @@ class App extends React.Component {
   }
 
   async requestStaticWithColor(backgroundColor, pixelColor){
+    console.log("request static with color");
+
     let prevState = this.state;
     let qrcodeAPIContext = prevState.qrcodeAPIContext;
 
@@ -79,6 +147,7 @@ class App extends React.Component {
     this.setState({
       qrcodeAPIContext : qrcodeAPIContext,
     });
+
   }
 
   stageTransition0_1(){
@@ -198,20 +267,20 @@ class App extends React.Component {
         <div id="body_container" className={"animated " + bodyContainerClasses + " " + this.state.animationsContext.bodyStageTransitionAnimations} >
           {
             this.state.stageContext.stage == 0 &&
-            <div className={editorContainerClasses}>
+            <div className={"editor " + editorContainerClasses}>
               <Editor />
             </div>
           }
 
           <div className={"productStage " + productStageContainerClasses}>
             <br />
+            { this.state.stageContext.stage == 1 && <br /> }
             <ProductStage />
           </div>
 
           {
-
             this.state.stageContext.stage == 1 &&
-            <div className={editorContainerClasses}>
+            <div className={"editor " + editorContainerClasses}>
               <br />
               <Editor />
             </div>

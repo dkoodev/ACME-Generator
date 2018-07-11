@@ -31,62 +31,73 @@ class Editor1 extends React.Component {
 
 
   pixelColorChangeComplete(color){
+    this.props.customTagPixelColorLoading();
     let colorInHex = color.hex.replace('#','');
+    let colorInHexBackground = this.state.chosenBackgroundColor;
+
     this.setState({ chosenPixelColor: colorInHex });
     this.props.changePixelColor(colorInHex);
-    setTimeout(()=>{
-      if(colorInHex == this.state.chosenPixelColor){
-        this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
+    setTimeout(async ()=>{
+      if(colorInHexBackground == this.state.chosenBackgroundColor &&
+         colorInHex == this.state.chosenPixelColor
+      ){
+        await this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
+        this.props.customTagPixelColorDone();
+      }else{
+        this.props.customTagPixelColorDone();
       }
     }, 1000);
   }
 
   backgroundColorChangeComplete(color){
+    this.props.customTagBackgroundColorLoading();
     let colorInHex = color.hex.replace('#','');
+    let colorInHexPixel = this.state.chosenPixelColor;
     this.props.changeBackgroundColor(colorInHex);
     this.setState({ chosenBackgroundColor: colorInHex });
-    setTimeout(()=>{
-      if(colorInHex == this.state.chosenBackgroundColor){
-        this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
+    setTimeout(async ()=>{
+      if(colorInHex == this.state.chosenBackgroundColor &&
+         colorInHexPixel == this.state.chosenPixelColor
+      ){
+        await this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
+        this.props.customTagBackgroundColorDone();
+      }else{
+        this.props.customTagBackgroundColorDone();
       }
     }, 1000);
   }
 
-  componentDidMount(){
-    let animate = ()=>{
-      this.setState((prevState,props)=> {return {
-        titleAnimations: prevState.titleAnimations + " bounce",
-      }});
-    }
-    setTimeout(animate, 1000);
-  }
 
   render() {
     return (
-      <div>
-        <div className="editor1 container ">
-          <br />
-          <br />
-
-          Choose Pixel Color
-          <SliderPicker
-            onChangeComplete={ this.pixelColorChangeComplete.bind(this) }
-          />
-          <br />
-          <br />
-          <br />
-
-          Choose Background Color
-          <SliderPicker
-            onChangeComplete={ this.backgroundColorChangeComplete.bind(this) }
-          />
-
-          <br />
-          <br />
-          <br />
-          <NextButton />
-
+      <div className="editor1 container ">
+        <div className="title">
+          Add your personal touch
         </div>
+        Pixel Color
+        <br />
+        <br />
+
+        <SliderPicker
+          onChangeComplete={ this.pixelColorChangeComplete.bind(this) }
+        />
+        <br />
+        <br />
+
+
+        Background Color
+        <br />
+        <br />
+
+        <SliderPicker
+          onChangeComplete={ this.backgroundColorChangeComplete.bind(this) }
+        />
+
+        <br />
+        <br />
+        <br />
+        <NextButton />
+
       </div>
     );
   }

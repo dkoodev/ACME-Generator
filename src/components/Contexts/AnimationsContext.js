@@ -7,6 +7,12 @@ export const AnimationsContext = React.createContext(
     productStageNextButtonDisplay: "",
     stageTransition0_1: () => {},
     stageTransitionAnimations: "",
+    customTagBackgroundColorAnimations: [],
+    customTagPixelColorAnimations: [],
+    customTagBackgroundColorLoading:()=>{},
+    customTagBackgroundColorDone:()=>{},
+    customTagPixelColorLoading:()=>{},
+    customTagPixelColorDone:()=>{},
   }
 );
 
@@ -19,7 +25,13 @@ export const withAnimationsContext = (Component) => {
             nextButtonDisappear,
             productStageNextButtonDisplay,
             stageTransition0_1,
-            stageTransitionAnimations
+            stageTransitionAnimations,
+            customTagBackgroundColorAnimations,
+            customTagPixelColorAnimations,
+            customTagBackgroundColorLoading,
+            customTagBackgroundColorDone,
+            customTagPixelColorLoading,
+            customTagPixelColorDone,
             }) =>
             <Component {...props}
               nextButtonAppear={nextButtonAppear}
@@ -27,6 +39,12 @@ export const withAnimationsContext = (Component) => {
               productStageNextButtonDisplay={productStageNextButtonDisplay}
               stageTransition0_1={stageTransition0_1}
               stageTransitionAnimations={stageTransitionAnimations}
+              customTagBackgroundColorAnimations={customTagBackgroundColorAnimations}
+              customTagPixelColorAnimations={customTagPixelColorAnimations}
+              customTagBackgroundColorLoading={customTagBackgroundColorLoading}
+              customTagBackgroundColorDone={customTagBackgroundColorDone}
+              customTagPixelColorLoading={customTagPixelColorLoading}
+              customTagPixelColorDone={customTagPixelColorDone}
             />
         }
       </AnimationsContext.Consumer>

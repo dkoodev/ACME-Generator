@@ -1,3 +1,4 @@
+const timeoutPromise = (timeout) => new Promise((resolve) => setTimeout(resolve, timeout));
 
 export const standardRequest = (text) => {
   let url = "https://api.acme.codes/new?msg=" + encodeURI(text)
@@ -55,13 +56,13 @@ export const requestPNGOnly = (text) => {
     });
 }
 
-export const fetchPNGOnly = (orderNumber, frameNumber) => {
+export const fetchPNGOnly = async (orderNumber, frameNumber) => {
   console.log("Fetching pngonly");
   let url = "https://api.acme.codes/orders/"
   + orderNumber
   + "/frames/"
   + frameNumber;
-
+  await timeoutPromise(2000);
   return fetch(url)
     .then((response) => {
       if (response.status == 202 ) {
