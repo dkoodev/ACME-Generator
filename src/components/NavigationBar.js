@@ -19,11 +19,11 @@ class NavigationBar extends React.Component {
             <a className="navbar-item" href="https://www.acme.codes">
               <img src={String(img)} id="logo-navbar" />
             </a>
-            <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false">
+            {/* <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false">
               <span aria-hidden="true">Home</span>
               <span aria-hidden="true">About</span>
               <span aria-hidden="true">FAQ</span>
-            </a>
+            </a> */}
           </div>
         </nav>
         {/* Big Banner */}

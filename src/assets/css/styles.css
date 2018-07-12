@@ -9,6 +9,18 @@ div#Editor.stage0{
   width: 50rem;
 }
 
+.stage1 .title{
+  position:relative;
+}
+
+.stage1 .advancedButton{
+  float: right;
+  position: absolute;
+  right:    0;
+  bottom:   0;
+  margin-bottom: 5px;
+}
+
 .stage1 .columns{
   max-width: 100%;
 }

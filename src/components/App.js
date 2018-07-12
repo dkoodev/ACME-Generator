@@ -45,9 +45,9 @@ class App extends React.Component {
         qrcodeString: "",
         orderId:"",
         frameUrl:"",
-        chosenPixelColor:"",
+        chosenPixelColor:"000000",
         changePixelColor:this.changePixelColor.bind(this),
-        chosenBackgroundColor:"",
+        chosenBackgroundColor: "FFFFFF",
         changeBackgroundColor: this.changeBackgroundColor.bind(this),
         requestStaticWithColor: this.requestStaticWithColor.bind(this),
       },
@@ -59,7 +59,6 @@ class App extends React.Component {
     let animationsContext = prevState.animationsContext;
     let customTagBackgroundColorAnimations = ["zoomIn","fadeIn","tag"];
     animationsContext.customTagBackgroundColorAnimations = customTagBackgroundColorAnimations;
-
     this.setState({
       animationsContext : animationsContext,
     });
@@ -68,8 +67,7 @@ class App extends React.Component {
   customTagBackgroundColorDone(){
     let prevState = this.state;
     let animationsContext = prevState.animationsContext;
-    let customTagBackgroundColorAnimations = ["zoomOut","fadeout"];
-    console.log(customTagBackgroundColorAnimations, customTagBackgroundColorAnimations.join(" "));
+    let customTagBackgroundColorAnimations = ["zoomOut","fadeout","tag"];
     animationsContext.customTagBackgroundColorAnimations = customTagBackgroundColorAnimations;
     this.setState({
       animationsContext : animationsContext,
@@ -98,7 +96,7 @@ class App extends React.Component {
   customTagPixelColorDone(){
     let prevState = this.state;
     let animationsContext = prevState.animationsContext;
-    let customTagPixelColorAnimations = ["zoomOut","fadeout"];
+    let customTagPixelColorAnimations = ["zoomOut","fadeout","tag"];
     animationsContext.customTagPixelColorAnimations = customTagPixelColorAnimations;
     this.setState({
       animationsContext : animationsContext,
@@ -139,11 +137,16 @@ class App extends React.Component {
     let qrcodeAPIContext = prevState.qrcodeAPIContext;
 
     let orderId = await APIDriver.requestPNGOnlyWithColor(this.state.qrcodeAPIContext.qrcodeString, backgroundColor, pixelColor);
-    let frameUrl = await APIDriver.fetchPNGOnly(orderId, 1);
-
     qrcodeAPIContext.orderId= orderId;
-    qrcodeAPIContext.frameUrl= frameUrl;
+    this.setState({
+      qrcodeAPIContext : qrcodeAPIContext,
+    });
 
+    let frameUrl = await APIDriver.fetchPNGOnly(orderId, 1);
+    if (this.state.qrcodeAPIContext.orderId != orderId) {
+      return;
+    }
+    qrcodeAPIContext.frameUrl= frameUrl;
     this.setState({
       qrcodeAPIContext : qrcodeAPIContext,
     });

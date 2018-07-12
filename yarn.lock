@@ -44,6 +44,10 @@
     humps "^2.0.1"
     prop-types "^15.5.10"
 
+"@icons/material@^0.2.4":
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
+
 "@webassemblyjs/ast@1.5.12":
   version "1.5.12"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.5.12.tgz#a9acbcb3f25333c4edfa1fdf3186b1ccf64e6664"
@@ -5218,10 +5222,11 @@ rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-color@^2.14.1:
-  version "2.14.1"
-  resolved "https://registry.yarnpkg.com/react-color/-/react-color-2.14.1.tgz#db8ad4f45d81e74896fc2e1c99508927c6d084e0"
+"react-color@git+https://git@github.com/dkoodev/react-color-dkoo.git":
+  version "2.16.0"
+  resolved "git+https://git@github.com/dkoodev/react-color-dkoo.git#3c6d9314a313c9374eb0c752d7d2ed2555b696d7"
   dependencies:
+    "@icons/material" "^0.2.4"
     lodash "^4.0.1"
     material-colors "^1.2.1"
     prop-types "^15.5.10"

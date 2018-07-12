@@ -7,6 +7,7 @@ import { square } from '@fortawesome/free-solid-svg-icons'
 
 // Contexts
 import {withAnimationsContext, AnimationsContext} from './Contexts/AnimationsContext';
+import {withQRCodeAPIContext, QRCodeAPIContext} from './Contexts/QRCodeAPIContext';
 
 
 
@@ -16,11 +17,8 @@ class CustomTag extends React.Component {
   }
 
   render() {
-    console.log("Rerendering customtag:" , this.props.type);
     let toolTipTitle = (this.props.type == "backgroundColor" ||
                       this.props.type == "pixelColor" ) ?  ("#" + this.props.tagInfo ) : this.props.tagInfo;
-    console.log(toolTipTitle);
-
     return (
       <Tooltip className="customTagWrapper" title={toolTipTitle} placement="right" mouseLeaveDelay={0}>
         <div id={"customTag" + this.props.id} className="customTag control">
@@ -37,7 +35,9 @@ class CustomTag extends React.Component {
           }
           {
             this.props.type == "backgroundColor" &&
-            <div className="tags has-addons">
+            (this.props.chosenBackgroundColor != "FFFFFF" ||
+            (this.props.chosenBackgroundColor == "FFFFFF" && this.props.customTagBackgroundColorAnimations.indexOf("is-hidden") == -1)) &&
+            <div className="tags has-addons ">
               {
                 this.props.customTagBackgroundColorAnimations.indexOf("is-hidden") == -1 &&
                 <div className={"icon animated " + this.props.customTagBackgroundColorAnimations.join(" ")} >
@@ -46,12 +46,15 @@ class CustomTag extends React.Component {
               }
               <span className="tag">Background Color</span>
               <span className="tag is-primary" style={{ backgroundColor: toolTipTitle }}>
-                <i className="fas fa-square"></i>
+                <FontAwesomeIcon icon="square" style={{ color : toolTipTitle == '#FFFFFF' ? '#000000' : '#FFFFFF' }}/>
               </span>
+
             </div>
           }
           {
-            this.props.type == "pixelColor" &&
+            this.props.type == "pixelColor"  &&
+            (this.props.chosenPixelColor != "000000" ||
+            (this.props.chosenPixelColor == "000000" && this.props.customTagPixelColorAnimations.indexOf("is-hidden") == -1)) &&
             <div className="tags has-addons">
               {
                 this.props.customTagPixelColorAnimations.indexOf("is-hidden") == -1 &&
@@ -61,9 +64,7 @@ class CustomTag extends React.Component {
               }
               <span className="tag">Pixel Color</span>
               <span className="tag " >
-                {/* <i className="fas fa-square"  ></i> */}
                 <FontAwesomeIcon icon="square" style={{ color : toolTipTitle }} />
-
               </span>
             </div>
           }
@@ -74,4 +75,4 @@ class CustomTag extends React.Component {
   }
 }
 
-export default withAnimationsContext(CustomTag);
+export default withQRCodeAPIContext(withAnimationsContext(CustomTag));
