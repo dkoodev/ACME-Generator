@@ -12,16 +12,19 @@
   "scripts": {
     "start": "webpack-dev-server --config ./webpack.dev.config.js --mode development --hot",
     "package": "webpack --config webpack.build.config.js --mode production",
+    "dev": "parcel ./src/index.html",
+    "build": "parcel build ./src/index.html --out-dir ./build --no-cache",
     "test": "echo \"No test specified\" && exit 0"
   },
   "keywords": [],
   "license": "ISC",
   "devDependencies": {
     "animate.css": "^3.6.1",
-    "antd": "^3.6.3",
+    "antd": "^3.7.0",
     "babel-core": "^6.23.1",
     "babel-loader": "^7.1.2",
     "babel-plugin-import": "^1.8.0",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-react": "^6.23.0",
     "babel-preset-stage-2": "^6.22.0",
     "bulma": "^0.7.1",
@@ -31,6 +34,7 @@
     "html-webpack-plugin": "^3.2.0",
     "jquery": "^3.3.1",
     "node-sass": "^4.9.0",
+    "parcel-bundler": "^1.9.7",
     "path": "^0.12.7",
     "popper.js": "^1.14.3",
     "progress-tracker": "^1.4.0",
@@ -44,6 +48,7 @@
     "sass-loader": "^7.0.3",
     "style-loader": "^0.21.0",
     "url-loader": "^1.0.1",
+    "warning": "^4.0.1",
     "webpack": "^4.12.0",
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.4"

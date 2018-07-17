@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import App from './components/App';
+import "babel-polyfill";
 // import progress_tracker from 'progress-tracker';
 // import 'antd/dist/antd.css';
 import './assets/css/mystyles.scss';
