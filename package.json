@@ -13,7 +13,7 @@
     "start": "webpack-dev-server --config ./webpack.dev.config.js --mode development --hot",
     "package": "webpack --config webpack.build.config.js --mode production",
     "dev": "parcel ./src/index.html",
-    "build": "parcel build ./src/index.html --out-dir ./build --no-cache",
+    "build": "parcel build ./src/index.html --no-cache",
     "test": "echo \"No test specified\" && exit 0"
   },
   "keywords": [],
