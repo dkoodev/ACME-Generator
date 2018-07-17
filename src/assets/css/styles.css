@@ -9,6 +9,45 @@ div#Editor.stage0{
   width: 50rem;
 }
 
+html body .is-unclickable{
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+html body .is-centered{
+  display: block;
+  margin-left: auto;
+  margin-right:auto;
+}
+
+.stage1 #stage1NextButton{
+  float: right;
+  position: absolute;
+  right:    0;
+  bottom:   0;
+}
+
+.stage1 #contrastPercentage{
+  font-size: 4rem;
+}
+
+.stage1 #lockButton{
+  display: block;
+  margin-left:  auto;
+  margin-right: auto;
+  width: 225px;
+}
+
+.stage1 #contrastPercentageViewer{
+  display: block;
+  margin-left:  auto;
+  margin-right: auto;
+  width: 225px;
+  text-align: center;
+  padding-left: 0;
+  padding-right:0;
+}
+
 .stage1 .title{
   position:relative;
 }
@@ -19,6 +58,10 @@ div#Editor.stage0{
   right:    0;
   bottom:   0;
   margin-bottom: 5px;
+}
+
+.stage1 .advancedPicker{
+  margin: auto;
 }
 
 .stage1 .columns{
@@ -41,8 +84,14 @@ div#Editor.stage0{
   padding: 12px 0 0 0;
 }
 
+.stage1 #Editor{
+  height:100%;
+}
+
 .stage1 .editor1 {
   padding: 12px 0 0 0;
+  height:100%;
+
 }
 
 .stage1 #body_container{

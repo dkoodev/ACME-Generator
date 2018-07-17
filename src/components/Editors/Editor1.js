@@ -1,5 +1,6 @@
 // Modules
 import React, { Component } from 'react';
+import { faLock, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 // Contexts
 import {withStageContext, StageContext} from '../Contexts/StageContext';
@@ -9,6 +10,8 @@ import {withQRCodeAPIContext, QRCodeAPIContext} from '../Contexts/QRCodeAPIConte
 // Components
 import NextButton from '../NextButton';
 import { GithubPicker , ChromePicker} from 'react-color';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 
 class Editor1 extends React.Component {
@@ -26,31 +29,218 @@ class Editor1 extends React.Component {
       backgroundColorGearLoading: false,
       showAdvanced: false,
       advancedButtonDisplay: "is-outlined",
-      advancedPixelTabDisplay: "is-active",
-      advancedBackgroundTabDisplay:"",
-      advancedPickerColor: "",
+      advancedColorTab : "pixel",
+      advancedPickerColorOutput: "000000",
+      uploadedFileList: [],
+      lockedColor: "",
+      lockColorButtonClicked: false,
+      lockedColorHex: "",
+      warningIconPixelTab: false,
+      warningIconBackgroundTab: false,
+      warnings : [],
+      showContrastPercentageViewer: false,
+      contrastDifference: 0,
     };
+  }
+
+
+  shouldComponentUpdate(nextProps, nextState){
+    return  this.props.stage != nextProps.stage ||
+    this.state.advancedColorTab != nextState.advancedColorTab ||
+    this.state.showAdvanced != nextState.showAdvanced ||
+    this.state.lockColorButtonClicked != nextState.lockColorButtonClicked ||
+    this.props.extraTags != nextState.extraTags ||
+    this.state.contrastDifference != nextState.contrastDifference
+    ;
+  }
+
+
+  lockColorButtonOnClick(){
+    console.log("lockedcolorhex", this.state.advancedPickerColorOutput);
+
+    if (!this.state.lockColorButtonClicked) {
+      this.setState({
+        lockedColor : this.state.advancedColorTab,
+        lockedColorHex : this.state.advancedPickerColorOutput,
+        lockColorButtonClicked: true
+      })
+    } else{
+      this.setState({
+        lockedColor : "",
+        lockedColorHex : "",
+        lockColorButtonClicked: false
+      })
+    }
   }
 
   showPixelTab(){
     this.setState({
-      advancedPixelTabDisplay: "is-active",
-      advancedBackgroundTabDisplay: "",
-      advancedPickerColor: this.state.chosenPixelColor,
+      advancedColorTab: "pixel",
     });
-
   }
 
   showBackgroundTab(){
     this.setState({
-      advancedBackgroundTabDisplay: "is-active",
-      advancedPixelTabDisplay: "",
-      advancedPickerColor: this.state.chosenBackgroundColor,
+      advancedColorTab: "background",
+    });
+  }
+
+
+
+  hideWarningBackgroundTab(){
+    this.setState({
+      warningIconPixelTab : false
+    });
+  }
+
+  hideWarningPixelTab(){
+    this.setState({
+      warningIconBackgroundTab : false
+    });
+  }
+
+  displayWarningBackgroundTab(){
+    this.setState({
+      warningIconPixelTab : true
+    });
+  }
+
+  displayWarningPixelTab(){
+    this.setState({
+      warningIconBackgroundTab : true
+    });
+  }
+
+  addWarning( name, tagInfo){
+    console.log("adding warning");
+    let warningTag = {
+      type: "warning" + " " + name,
+      tagInfo: tagInfo
+    };
+    let newWarnings = this.state.warnings;
+    newWarnings.push(warningTag);
+    this.setState({
+      warnings : newWarnings,
+    });
+    this.props.setExtraTags(this.state.warnings);
+  }
+
+  removeWarning(name){
+    this.setState((prevState)=>{
+      warnings : prevState.warnings.filter((item)=>{
+        return item.type == "warning" && item.tagInfo.includes(name);
+      })
+    });
+    this.props.setExtraTags(this.state.warnings);
+  }
+
+  removeAllWarnings(){
+    this.setState({
+      warnings : [],
+    });
+    this.props.setExtraTags(this.state.warnings);
+  }
+
+  compareContrast(lockedColor, unlockedColor) {
+    const reducer = (accumulator, currentValue) => accumulator + parseInt(currentValue, 16);
+
+    let lockedColorRGB = lockedColor.match(/.{2}/g);
+    let unlockedColorRGB = unlockedColor.match(/.{2}/g);
+    let lockedColorGrayScale = lockedColorRGB.reduce(reducer, 0) / 3;
+    let unlockedColorGrayScale = unlockedColorRGB.reduce(reducer, 0) / 3;
+    let lockedColorPercentage = 100 * (lockedColorGrayScale / 256);
+    let unlockedColorPercentage = 100 * (unlockedColorGrayScale / 256);
+    return lockedColorPercentage - unlockedColorPercentage;
+  }
+
+  isColorValid( lockedColor, lockedColorHex, unlockedColorHex) {
+    let contrastDiff = this.compareContrast(lockedColorHex, unlockedColorHex);
+    if (lockedColor == "pixel") {
+      // Background Color is lighter than pixel | Preferred
+      if (contrastDiff < 0) {
+        if (Math.abs(contrastDiff) > 40) {
+          // console.log("Background Color is lighter than pixel, GREAT");
+          return true;
+        }else{
+          // console.log("Background Color is lighter than pixel, could be better");
+          this.addWarning("bgColorNotLightEnough", "Background Color should be lighter");
+        }
+      }else{
+        // console.log("Background Color is darker than pixel, bad");
+        this.addWarning("bgColorDarker", "Background Color should not be darker than pixel");
+      }
+    } else if(lockedColor == "background"){
+      // Pixel Color is lighter than background
+      if (contrastDiff < 0) {
+        // console.log("Pixel Color is lighter than background, bad");
+        this.addWarning("pxColorLighter", "Pixel Color should not be lighter than background");
+      }else{
+        if (Math.abs(contrastDiff) > 40) {
+          // console.log("Pixel Color is darker than pixel, GREAT");
+          return true;
+        }else{
+          // console.log("Pixel Color is darker than pixel, could be better");
+          this.addWarning("pxColorLighter", "Pixel Color should be darker");
+        }
+      }
+    } else{
+      // Assumes lockcolor is pixel and unlocked is background
+      // Background Color is lighter than pixel | Preferred
+      if (contrastDiff < 0) {
+        if (Math.abs(contrastDiff) > 40) {
+          // console.log("Background Color is lighter than pixel, GREAT");
+          return true;
+        }
+      }
+      this.addWarning("bgColorDarker", "Colors are Invalid. Try using the lock feature");
+    }
+    return false;
+  }
+
+  showContrastPercentageViewer(){
+    this.setState({
+      showContrastPercentageViewer: true
+    });
+  }
+
+  hideContrastPercentageViewer(){
+    this.setState({
+      showContrastPercentageViewer: false
+    });
+  }
+
+  advancedPickerColorChange(color){
+    if (! this.state.lockColorButtonClicked) return;
+    let colorInHex = color.hex.toUpperCase().replace('#','');
+    let contrastDifference = this.compareContrast(this.state.lockedColorHex, colorInHex);
+    if (this.state.advancedColorTab == "background") {
+      contrastDifference *= -1;
+    }
+    this.setState({
+      contrastDifference : Math.round(contrastDifference)
     });
   }
 
   advancedPickerColorChangeComplete(color){
-    if (this.state.advancedPixelTabDisplay == "is-active") {
+    let colorInHex = color.hex.toUpperCase().replace('#','');
+    this.removeAllWarnings();
+    this.setState({
+      advancedPickerColorOutput : colorInHex
+    });
+
+    if (this.state.lockColorButtonClicked) {
+      if (!this.isColorValid(this.state.lockedColor, this.state.lockedColorHex, colorInHex)) {
+        this.showContrastPercentageViewer();
+      }
+    }else{
+      if (this.state.advancedColorTab == 'pixel') {
+        this.isColorValid('', colorInHex, this.state.chosenBackgroundColor);
+      }else{
+        this.isColorValid('', this.state.chosenPixelColor, colorInHex);
+      }
+    }
+
+    if (this.state.advancedColorTab == "pixel") {
       this.pixelColorChangeComplete(color);
     }else{
       this.backgroundColorChangeComplete(color);
@@ -115,7 +305,7 @@ class Editor1 extends React.Component {
     }, 1000);
   }
 
-  showAdvanced(){
+  toggleAdvanced(){
     if (this.state.showAdvanced) {
       this.setState({
         showAdvanced: false,
@@ -125,22 +315,49 @@ class Editor1 extends React.Component {
       this.setState({
         showAdvanced: true,
         advancedButtonDisplay : "",
-        advancedPickerColor : this.state.advancedPixelTabDisplay == "is-active" ? this.state.chosenPixelColor : this.state.chosenBackgroundColor,
       });
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState){
-    return this.state.advancedPickerColor != nextState.advancedPickerColor;
-  }
-
   render() {
+    let advancedPixelTabDisplay = "";
+    let advancedBackgroundTabDisplay = "";
+    if (this.state.advancedColorTab == "pixel") {
+      advancedPixelTabDisplay = "is-active";
+      advancedBackgroundTabDisplay = "";
+    }else if (this.state.advancedColorTab == "background") {
+      advancedPixelTabDisplay = "";
+      advancedBackgroundTabDisplay = "is-active";
+    }
+
+    let lockColorButtonDisabled = "";
+    if (this.state.showAdvanced && this.state.lockColorButtonClicked && this.state.advancedColorTab != this.state.lockedColor) {
+      lockColorButtonDisabled = "disabled";
+    }
+
+    let advancedPickerColorInput = this.state.advancedColorTab == "pixel" ? this.state.chosenPixelColor : this.state.chosenBackgroundColor;
+
+    let advancedPickerClasses = "";
+    let lockButtonText = "Lock Color";
+
+    if (this.state.lockedColor == this.state.advancedColorTab) {
+      advancedPickerClasses = "is-unclickable";
+      lockButtonText = "Unlock Color";
+    }
+    let lockColorButtonClasses = this.state.lockColorButtonClicked ? "" : "is-outlined";
+    let advancedPixelTabLockIconDisplay = this.state.lockedColor == "pixel" ? "" : "is-hidden";
+    let advancedPixelTabWarningIconDisplay = this.state.warningIconPixelTab ? "" : "is-hidden";
+    let advancedBackgroundTabLockIconDisplay = this.state.lockedColor == "background" ? "" : "is-hidden";
+    let advancedBackgroundTabWarningIconDisplay = this.state.warningIconBackgroundTab ? "" : "is-hidden";
+
+    let contrastPercentageViewerClasses = this.state.contrastDifference >= 40 ? "is-success" : "is-warning";
+
     return (
       <div className="editor1 container ">
         <div className="title">
           Add your personal touch
           <a className={"button is-info is-small advancedButton " + this.state.advancedButtonDisplay}
-            onClick={this.showAdvanced.bind(this)}>
+            onClick={this.toggleAdvanced.bind(this)}>
             Advanced
           </a>
         </div>
@@ -183,39 +400,84 @@ class Editor1 extends React.Component {
               <div className="advancedOptions" >
                 <div className="tabs is-centered is-fullwidth">
                   <ul>
-                    <li className={this.state.advancedPixelTabDisplay}>
-                      <a onClick={this.showPixelTab.bind(this)}>Pixel</a>
+                    <li className={advancedPixelTabDisplay}>
+                      <a onClick={this.showPixelTab.bind(this)}>
+                        <FontAwesomeIcon className={advancedPixelTabLockIconDisplay} icon={faLock} style={{marginLeft:"7px", marginRight:"7px"}}/>
+                        Pixel
+                        <FontAwesomeIcon className={advancedPixelTabWarningIconDisplay} icon={faExclamationTriangle} style={{marginLeft:"7px", marginRight:"7px", color: "orange"}}/>
+
+                      </a>
+
                     </li>
-                    <li className={this.state.advancedBackgroundTabDisplay}>
-                      <a onClick={this.showBackgroundTab.bind(this)}>Background</a>
+                    <li className={advancedBackgroundTabDisplay}>
+                      <a onClick={this.showBackgroundTab.bind(this)}>
+                        <FontAwesomeIcon className={advancedBackgroundTabLockIconDisplay} icon={faLock} style={{marginLeft:"7px", marginRight:"7px"}}/>
+                        Background
+                        <FontAwesomeIcon className={advancedBackgroundTabWarningIconDisplay} icon={faExclamationTriangle} style={{marginLeft:"7px", marginRight:"7px", color: "orange"}}/>
+                      </a>
                     </li>
                   </ul>
                 </div>
 
                 <ChromePicker
                   disableAlpha={true}
-                  color={this.state.advancedPickerColor}
-                  style={{margin:"0 0 auto auto"}}
+                  color={advancedPickerColorInput}
                   onChangeComplete={this.advancedPickerColorChangeComplete.bind(this)}
+                  onChange={this.advancedPickerColorChange.bind(this)}
+                  className={"advancedPicker " + advancedPickerClasses}
                 />
-                <br />
-                <br />
 
+                <br />
+                {/* TODO Add tooltip for explaining color contrast */}
+                <a id="lockButton" className={"button is-black " + lockColorButtonClasses} onClick={this.lockColorButtonOnClick.bind(this)} disabled={lockColorButtonDisabled} >
+                  {lockButtonText}
+                </a>
 
-                <div className="control">
-                  <input className="input" type="text" placeholder="Text input" />
-                </div>
+                <br />
+                {
+                  this.state.showContrastPercentageViewer &&
+                  <div id="contrastPercentageViewer" className={"notification animated fadeIn " + contrastPercentageViewerClasses} >
+                    <h1>
+                      Contrast
+                    </h1>
+                    <div id="contrastPercentage">
+                      {this.state.contrastDifference + "%"}
+                    </div>
+                  </div>
+                }
               </div>
             </div>
             <div className="column is-half">
+                {/* <input type="checkbox" /> Transparent Background
+                <br />
+                <br />
+                Resolution:
+                <div className="select">
+                  <select>
+                    <option>150px</option>
+                    <option>270px</option>
+                    <option>400px</option>
+                  </select>
+                </div>
+                <br />
+                <br />
+                Pixel Shape:
+                <div className="select">
+                  <select>
+                    <option>Square</option>
+                    <option>Circle</option>
+                  </select>
+                </div>
+                <br /> */}
 
             </div>
+
           </div>
+
         }
 
         <br />
-        <br />
-        <br />
+
 
         <NextButton />
 

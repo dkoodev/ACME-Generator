@@ -50,8 +50,18 @@ class App extends React.Component {
         chosenBackgroundColor: "FFFFFF",
         changeBackgroundColor: this.changeBackgroundColor.bind(this),
         requestStaticWithColor: this.requestStaticWithColor.bind(this),
+        extraTags : [],
+        setExtraTags : this.setExtraTags.bind(this),
       },
     }
+  }
+
+  setExtraTags(tags){
+    let qrcodeAPIContext = this.state.qrcodeAPIContext;
+    qrcodeAPIContext.extraTags = tags;
+    this.setState({
+      qrcodeAPIContext : qrcodeAPIContext
+    });
   }
 
   customTagBackgroundColorLoading(){

@@ -8,7 +8,6 @@ import {withAnimationsContext, AnimationsContext} from '../Contexts/AnimationsCo
 import {withQRCodeAPIContext, QRCodeAPIContext} from '../Contexts/QRCodeAPIContext';
 
 // Components
-import CustomTag from '../CustomTag';
 import CustomTags from '../CustomTags';
 
 // Assets
@@ -43,7 +42,7 @@ class ProductStage1 extends React.Component {
         tagInfo: this.props.chosenBackgroundColor
       }
     ];
-
+    tags = tags.concat(this.props.extraTags);
     return (
       <div id="ProductStage1" className="columns" >
           <div id="qrcode-container-wrapper" className="column">

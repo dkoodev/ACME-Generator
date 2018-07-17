@@ -1,9 +1,10 @@
 // Modules
 import React, { Component } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { square, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+
 // Components
 import {Tooltip} from 'antd';
-import { square } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 // Contexts
 import {withAnimationsContext, AnimationsContext} from './Contexts/AnimationsContext';
@@ -65,6 +66,15 @@ class CustomTag extends React.Component {
               <span className="tag">Pixel Color</span>
               <span className="tag " >
                 <FontAwesomeIcon icon="square" style={{ color : toolTipTitle }} />
+              </span>
+            </div>
+          }
+          {
+            this.props.type.includes("warning")  &&
+            <div className="tags has-addons">
+              <span className="tag">Warning</span>
+              <span className="tag " >
+                <FontAwesomeIcon icon={faExclamationTriangle} style={{ color : "orange" }} />
               </span>
             </div>
           }

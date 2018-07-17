@@ -30,7 +30,14 @@ class NextButton extends React.Component {
   render() {
     let nextStageButtonClasses = "";
     let nextStageButtonAttr = "";
-    nextStageButtonAttr = this.props.productStageNextButtonDisplay == "is-disabled" ? "disabled" : "";
+    if (this.props.stage == 0) {
+      nextStageButtonAttr = this.props.productStageNextButtonDisplay == "is-disabled" ? "disabled" : "";
+    }else if (this.props.stage == 1) {
+      nextStageButtonAttr = this.props.extraTags.some((item)=>{
+        return item.type.includes("warning");
+      }) ?
+      true : false;
+    }
 
     return (
       <div id="NextButton" >

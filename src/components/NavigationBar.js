@@ -31,7 +31,7 @@ class NavigationBar extends React.Component {
             <br />
             <div className="container has-text-grey-dark	">
               <h1 className="title">
-                Animated Code Made Easy Generator
+                Creating Animated Codes Made Easy
               </h1>
               <h2 className="subtitle">
                 Nothing to explain! Just try it out below.

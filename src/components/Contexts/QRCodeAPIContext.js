@@ -12,6 +12,8 @@ export const QRCodeAPIContext = React.createContext(
     chosenBackgroundColor:"",
     changeBackgroundColor:()=>{},
     requestStaticWithColor:()=>{},
+    extraTags : [],
+    setExtraTags : ()=> {},
   }
 );
 
@@ -29,7 +31,10 @@ export const withQRCodeAPIContext = (Component) => {
             changePixelColor,
             chosenBackgroundColor,
             changeBackgroundColor,
-            requestStaticWithColor}) =>
+            requestStaticWithColor,
+            extraTags,
+            setExtraTags,
+          }) =>
             <Component {...props}
               textToConvertJS={textToConvertJS}
               textToConvertAPI={textToConvertAPI}
@@ -41,6 +46,8 @@ export const withQRCodeAPIContext = (Component) => {
               chosenBackgroundColor={chosenBackgroundColor}
               changeBackgroundColor={changeBackgroundColor}
               requestStaticWithColor={requestStaticWithColor}
+              extraTags={extraTags}
+              setExtraTags={setExtraTags}
             />
         }
       </QRCodeAPIContext.Consumer>
