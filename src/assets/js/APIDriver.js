@@ -56,7 +56,56 @@ export const requestPNGOnly = (text) => {
     });
 }
 
-export const fetchPNGOnly = async (orderNumber, frameNumber) => {
+export const requestStaticPNG = (qrcodeInfo) => {
+  console.log("in apidriver")
+  if (qrcodeInfo.message == "") {
+    console.log("message is empty");
+    return -1;
+  }
+  if ((qrcodeInfo.resolutionValue < 100 || qrcodeInfo.resolutionValue > 400) && qrcodeInfo.resolutionValue != -1) {
+    console.log("resolution invalid");
+    return -1;
+  }
+
+  // TODO : add restrictions here
+
+  let url = "https://api.acme.codes/new?msg="
+  + encodeURI(qrcodeInfo.message)
+  + "&anim=staticCodeOnly"
+  + "&xres="
+  + qrcodeInfo.resolutionValue.toString()
+  + "&yres="
+  + qrcodeInfo.resolutionValue.toString()
+  + "&gif=0";
+
+  if (qrcodeInfo.stencil) {
+    url += "&stencil=true";
+  }else{
+    if (qrcodeInfo.pixelColor != "000000" && qrcodeInfo.pixelColor != "") {
+      url += "&pixelColor=" + qrcodeInfo.pixelColor;
+    }
+
+    if (qrcodeInfo.backgroundColor != "FFFFFF" && qrcodeInfo.backgroundColor != "") {
+      url += "&bgpColor=" + qrcodeInfo.backgroundColor;
+    }
+  }
+
+  if (qrcodeInfo.tileShape != "") {
+    url += "&tileShape=" + qrcodeInfo.tileShape;
+  }
+  console.log(url);
+
+  return fetch(url)
+    .then((response)=>{
+      console.log(response);
+      return response.json();
+    })
+    .then((json)=>{
+      return json.orderNumber;
+    });
+}
+
+export const fetchPNG = async (orderNumber, frameNumber) => {
   console.log("Fetching pngonly");
   let url = "https://api.acme.codes/orders/"
   + orderNumber

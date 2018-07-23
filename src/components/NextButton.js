@@ -12,42 +12,48 @@ class NextButton extends React.Component {
     super();
   }
 
+
   stage0NextButtonOnClickHandler(){
-    this.props.nextButtonDisappear();
+    // this.props.animationsContext.nextButtonDisappear();
     setTimeout(()=>{
-      this.props.stageTransition0_1();
+      this.props.animationsContext.stageTransition0_1();
     }, 200);
   }
 
   stage1NextButtonOnClickHandler(){
     this.props.nextButtonDisappear();
-
     setTimeout(()=>{
-      this.props.stageTransition0_1();
+      this.props.animationsContext.stageTransition0_1();
     }, 200);
   }
 
   render() {
     let nextStageButtonClasses = "";
-    let nextStageButtonAttr = "";
-    if (this.props.stage == 0) {
-      nextStageButtonAttr = this.props.productStageNextButtonDisplay == "is-disabled" ? "disabled" : "";
-    }else if (this.props.stage == 1) {
-      nextStageButtonAttr = this.props.extraTags.some((item)=>{
-        return item.type.includes("warning");
-      }) ?
-      true : false;
+    let nextStageButtonAttribute = "";
+
+    switch (this.props.stage) {
+      case 0:
+        nextStageButtonClasses = this.props.animationsContext.nextButtonDisplay ? "" : "is-hidden" ;
+        nextStageButtonAttribute = this.props.animationsContext.nextButtonDisabled ? "disabled" : "";
+        break;
+      case 1:
+        nextStageButtonClasses = this.props.animationsContext.nextButtonDisplay ? "fadeIn" : "is-hidden" ;
+        // nextStageButtonAttribute = this.props.animationsContext.nextButtonDisabled;
+        nextStageButtonAttribute = this.props.qrcodeAPIContext.tags.some((item)=>{
+          return item.type.includes("warning");
+        });
+        break;
     }
 
     return (
       <div id="NextButton" >
         {
           this.props.stage == 0 &&
-          <a id="stage0NextButton" onClick={this.stage0NextButtonOnClickHandler.bind(this)} className={"button is-link animated " } disabled={nextStageButtonAttr}>Customize</a>
+          <a id="stage0NextButton" onClick={this.stage0NextButtonOnClickHandler.bind(this)} className={"button is-link animated " + nextStageButtonClasses} disabled={nextStageButtonAttribute}>Customize</a>
         }
         {
           this.props.stage == 1 &&
-          <a id="stage1NextButton" onClick={this.stage1NextButtonOnClickHandler.bind(this)} className={"button is-link animated " } disabled={nextStageButtonAttr}>Animate</a>
+          <a id="stage1NextButton" onClick={this.stage1NextButtonOnClickHandler.bind(this)} className={"button is-link animated " } disabled={nextStageButtonAttribute}>Animate</a>
         }
 
       </div>

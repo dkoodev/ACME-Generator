@@ -17,9 +17,6 @@ import img from '../../assets/images/loading.gif';
 class ProductStage1 extends React.Component {
   constructor(){
     super();
-    this.state = {
-      url: "nope"
-    }
   }
 
   reloadComponent(ev){
@@ -28,26 +25,17 @@ class ProductStage1 extends React.Component {
   }
 
   render() {
-    let tags = [
-      {
-        type:"message",
-        tagInfo: this.props.qrcodeString
-      },
-      {
-        type:"pixelColor",
-        tagInfo: this.props.chosenPixelColor
-      },
-      {
-        type:"backgroundColor",
-        tagInfo: this.props.chosenBackgroundColor
-      }
-    ];
-    tags = tags.concat(this.props.extraTags);
+    let tags = this.props.qrcodeAPIContext.tags;
+    tags = tags.concat(this.props.qrcodeAPIContext.warningTags);
+    let frameUrl = this.props.qrcodeAPIContext.qrcodeInfo.url;
+    // let qrcodeContainerClasses = this.props.qrcodeAPIContext.qrcodeInfo.stencil && this.props.qrcodeAPIContext.qrcodeInfo.requestCount == 0 ? "transparentBackground" : "";
     return (
       <div id="ProductStage1" className="columns" >
           <div id="qrcode-container-wrapper" className="column">
-            <div id="qrcode-container" className="box " >
-              <img onError={this.reloadComponent.bind(this)} src={this.props.frameUrl} style={{width:"100%",height:"100%", margin:"auto"}} />
+            <div id="qrcode-container" className={"box "} >
+              <div className={"transparentBackground"}>
+                <img onError={this.reloadComponent.bind(this)} src={frameUrl} style={{width:"100%",height:"100%", margin:"auto"}} />
+              </div>
             </div>
           </div>
           <div className="column is-one-quarter customTags">

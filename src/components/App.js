@@ -1,6 +1,7 @@
 // Modules
 import React, { Component } from 'react';
-import * as APIDriver from '../assets/js/APIDriver';
+import * as QRCodeAPIContextFunctions from './Contexts/QRCodeAPIContextFunctions.js';
+import * as AnimationsContextFunctions from './Contexts/AnimationsContextFunctions.js';
 
 // CSS
 import '../assets/css/styles.css';
@@ -22,171 +23,65 @@ class App extends React.Component {
 
     this.state = {
       stageContext:{
-        stage : 0,
+        stage : 1,
         nextStage : this.nextStage.bind(this),
         prevStage : this.prevStage.bind(this),
       },
       animationsContext: {
-        nextButtonAppear : this.nextButtonAppear.bind(this),
-        nextButtonDisappear : this.nextButtonDisappear.bind(this),
-        productStageNextButtonDisplay : "is-disabled",
-        stageTransition0_1: this.stageTransition0_1.bind(this),
-        stageTransitionAnimations: "",
-        customTagBackgroundColorAnimations: ["is-hidden"],
-        customTagPixelColorAnimations: ["is-hidden"],
-        customTagBackgroundColorLoading: this.customTagBackgroundColorLoading.bind(this),
-        customTagBackgroundColorDone: this.customTagBackgroundColorDone.bind(this),
-        customTagPixelColorLoading: this.customTagPixelColorLoading.bind(this),
-        customTagPixelColorDone: this.customTagPixelColorDone.bind(this),
+        nextButtonDisplay  : true,
+        nextButtonDisabled : true,
+        nextButtonDisable : AnimationsContextFunctions.nextButtonDisable.bind(this),
+        nextButtonAble : AnimationsContextFunctions.nextButtonAble.bind(this),
+        nextButtonAppear : AnimationsContextFunctions.nextButtonAppear.bind(this),
+        nextButtonDisappear : AnimationsContextFunctions.nextButtonDisappear.bind(this),
+        stageTransition0_1  : AnimationsContextFunctions.stageTransition0_1.bind(this),
+        stageTransition0_1AnimationStage0BodyOut : false,
+        stageTransition0_1AnimationStage1BodyIn : false,
       },
       qrcodeAPIContext:{
-        textToConvertJS: this.textToConvertJS.bind(this),
-        textToConvertAPI : this.textToConvertAPI.bind(this),
-        qrcodeString: "",
-        orderId:"",
-        frameUrl:"",
-        chosenPixelColor:"000000",
-        changePixelColor:this.changePixelColor.bind(this),
-        chosenBackgroundColor: "FFFFFF",
-        changeBackgroundColor: this.changeBackgroundColor.bind(this),
-        requestStaticWithColor: this.requestStaticWithColor.bind(this),
-        extraTags : [],
-        setExtraTags : this.setExtraTags.bind(this),
+        textToConvertJS : QRCodeAPIContextFunctions.textToConvertJS.bind(this),
+        textToConvertAPI : QRCodeAPIContextFunctions.textToConvertAPI.bind(this),
+        setPixelColor : QRCodeAPIContextFunctions.setPixelColor.bind(this),
+        setBackgroundColor : QRCodeAPIContextFunctions.setBackgroundColor.bind(this),
+        requestStatic : QRCodeAPIContextFunctions.requestStatic.bind(this),
+        setResolutionValue : QRCodeAPIContextFunctions.setResolutionValue.bind(this),
+        setStencil : QRCodeAPIContextFunctions.setStencil.bind(this),
+        setTileShape: QRCodeAPIContextFunctions.setTileShape.bind(this),
+        setTag : QRCodeAPIContextFunctions.setTags.bind(this),
+        updateTag : QRCodeAPIContextFunctions.updateTag.bind(this),
+        incrementRequestCount : QRCodeAPIContextFunctions.incrementRequestCount.bind(this),
+        decrementRequestCount : QRCodeAPIContextFunctions.decrementRequestCount.bind(this),
+        clearRequestCount : QRCodeAPIContextFunctions.clearRequestCount.bind(this),
+        clearAllTags : QRCodeAPIContextFunctions.clearAllTags.bind(this),
+        setWarningTags : QRCodeAPIContextFunctions.setWarningTags.bind(this),
+        tags : [
+          // DELETE next part for production
+          {
+            type : "message",
+            tagInfo : "dkoo testing",
+            gearLoadingAnimationIn : false,
+            gearLoadingAnimationOut : false,
+            gearLoadingAnimationDisplay : false,
+          },
+        ],
+        warningTags : [],
+        qrcodeInfo : {
+          orderId : "",
+          message : "dkoo testing",
+          pixelColor : "000000",
+          backgroundColor : "FFFFFF",
+          resolutionValue : 400,
+          stencil : false,
+          tileShape : "",
+          url : "",
+          requestCount : 0,
+        },
       },
     }
   }
 
-  setExtraTags(tags){
-    let qrcodeAPIContext = this.state.qrcodeAPIContext;
-    qrcodeAPIContext.extraTags = tags;
-    this.setState({
-      qrcodeAPIContext : qrcodeAPIContext
-    });
-  }
-
-  customTagBackgroundColorLoading(){
-    let prevState = this.state;
-    let animationsContext = prevState.animationsContext;
-    let customTagBackgroundColorAnimations = ["zoomIn","fadeIn","tag"];
-    animationsContext.customTagBackgroundColorAnimations = customTagBackgroundColorAnimations;
-    this.setState({
-      animationsContext : animationsContext,
-    });
-  }
-
-  customTagBackgroundColorDone(){
-    let prevState = this.state;
-    let animationsContext = prevState.animationsContext;
-    let customTagBackgroundColorAnimations = ["zoomOut","fadeout","tag"];
-    animationsContext.customTagBackgroundColorAnimations = customTagBackgroundColorAnimations;
-    this.setState({
-      animationsContext : animationsContext,
-    });
-
-    setTimeout(()=>{
-      customTagBackgroundColorAnimations.push("is-hidden");
-      animationsContext.customTagBackgroundColorAnimations = customTagBackgroundColorAnimations;
-      this.setState({
-        animationsContext : animationsContext,
-      });
-    }, 300);
-  }
-
-  customTagPixelColorLoading(){
-    let prevState = this.state;
-    let animationsContext = prevState.animationsContext;
-    let customTagPixelColorAnimations = ["zoomIn","fadeIn","tag"];
-    animationsContext.customTagPixelColorAnimations = customTagPixelColorAnimations;
-
-    this.setState({
-      animationsContext : animationsContext,
-    });
-  }
-
-  customTagPixelColorDone(){
-    let prevState = this.state;
-    let animationsContext = prevState.animationsContext;
-    let customTagPixelColorAnimations = ["zoomOut","fadeout","tag"];
-    animationsContext.customTagPixelColorAnimations = customTagPixelColorAnimations;
-    this.setState({
-      animationsContext : animationsContext,
-    });
-
-    setTimeout(()=>{
-      customTagPixelColorAnimations.push("is-hidden");
-      animationsContext.customTagPixelColorAnimations = customTagPixelColorAnimations;
-      this.setState({
-        animationsContext : animationsContext,
-      });
-    }, 300);
-  }
-
-
-  changePixelColor(color){
-    let prevState = this.state;
-    let qrcodeAPIContext = prevState.qrcodeAPIContext;
-    qrcodeAPIContext.chosenPixelColor = color;
-    this.setState({
-      qrcodeAPIContext : qrcodeAPIContext,
-    });
-  }
-
-  changeBackgroundColor(color){
-    let prevState = this.state;
-    let qrcodeAPIContext = prevState.qrcodeAPIContext;
-    qrcodeAPIContext.chosenBackgroundColor = color;
-    this.setState({
-      qrcodeAPIContext : qrcodeAPIContext,
-    });
-  }
-
-  async requestStaticWithColor(backgroundColor, pixelColor){
-    console.log("request static with color");
-
-    let prevState = this.state;
-    let qrcodeAPIContext = prevState.qrcodeAPIContext;
-
-    let orderId = await APIDriver.requestPNGOnlyWithColor(this.state.qrcodeAPIContext.qrcodeString, backgroundColor, pixelColor);
-    qrcodeAPIContext.orderId= orderId;
-    this.setState({
-      qrcodeAPIContext : qrcodeAPIContext,
-    });
-
-    let frameUrl = await APIDriver.fetchPNGOnly(orderId, 1);
-    if (this.state.qrcodeAPIContext.orderId != orderId) {
-      return;
-    }
-    qrcodeAPIContext.frameUrl= frameUrl;
-    this.setState({
-      qrcodeAPIContext : qrcodeAPIContext,
-    });
-
-  }
-
-  stageTransition0_1(){
-    let prevState = this.state;
-    let animationsContext = prevState.animationsContext;
-    animationsContext.bodyStageTransitionAnimations = "fadeOutLeft";
-    this.setState({
-      animationsContext : animationsContext,
-    });
-    setTimeout(() => {
-      this.nextStage();
-      setTimeout(()=> {
-        prevState = this.state;
-        animationsContext = prevState.animationsContext;
-        animationsContext.bodyStageTransitionAnimations = "fadeInRight";
-        this.setState({
-          animationsContext : animationsContext,
-        });
-      }, 200);
-    }, 1000);
-  }
-
-
   nextStage(){
-    let prevState = this.state;
-    let stageContext = prevState.stageContext;
+    let stageContext = this.state.stageContext;
     stageContext.stage = stageContext.stage + 1;
     this.setState({
       stageContext:stageContext
@@ -194,98 +89,68 @@ class App extends React.Component {
   }
 
   prevStage(){
-    let prevState = this.state;
-    let stageContext = prevState.stageContext;
+    let stageContext = this.state.stageContext;
     stageContext.stage = stageContext.stage - 1;
     this.setState({
       stageContext:stageContext
     });
   }
 
-  nextButtonAppear(){
-    let prevState = this.state;
-    let animationsContext = prevState.animationsContext;
-    animationsContext.productStageNextButtonDisplay = "fadeIn";
-    this.setState({
-      animationsContext : animationsContext,
-    });
-  }
-
-  nextButtonDisappear(){
-
-    let prevState = this.state;
-    let animationsContext = prevState.animationsContext;
-    animationsContext.productStageNextButtonDisplay = "is-disabled";
-    this.setState({
-      animationsContext : animationsContext,
-    });
-
-  }
-
-  textToConvertJS(text){
-    // QR code generation through javascript engine
-    let prevState = this.state;
-    let qrcodeAPIContext = prevState.qrcodeAPIContext;
-    if (text == "") {
-      qrcodeAPIContext.qrcodeString = '';
-    }else{
-      qrcodeAPIContext.qrcodeString = text;
-    }
-    this.setState({
-      qrcodeAPIContext : qrcodeAPIContext,
-    });
-  }
-
-  async textToConvertAPI(text){
-    // QR Code generation through API
-    let prevState = this.state;
-    let qrcodeAPIContext = prevState.qrcodeAPIContext;
-
-    if(text != ""){
-      // If using ACME API for qrcode generation, orderId and frameurl is necesary.
-      this.textToConvertJS(text);
-      // If using ACME API for qrcode generation, orderId and frameurl is necesary.
-      let orderId = await APIDriver.requestPNGOnly(text);
-      let frameUrl = await APIDriver.fetchPNGOnly(orderId, 1);
-
-      qrcodeAPIContext.orderId= orderId;
-      qrcodeAPIContext.frameUrl= frameUrl;
-
-    }else {
-      qrcodeAPIContext.orderId= '';
-      qrcodeAPIContext.frameUrl= '';
-    }
-
-    this.setState({
-      qrcodeAPIContext : qrcodeAPIContext,
-    });
-  }
-
 
   render() {
-    let productStageContainerClasses  =  this.state.qrcodeAPIContext.qrcodeString == "" ? "hide"      :
-                                                    this.state.stageContext.stage == 0  ? "container" : "column is-half";
-    let editorContainerClasses        =  this.state.stageContext.stage            == 0  ? "container" : "column is-half";
-    let bodyContainerClasses          =  this.state.stageContext.stage            == 0  ? "container" : "columns container is-centered";
+
+    // Product Stage container formatting
+    let productStageContainerClasses = ["productStage"];
+    if (this.state.stageContext.stage == 0) {
+      if (this.state.qrcodeAPIContext.qrcodeInfo.message == "") {
+        productStageContainerClasses.push("hide");
+      }
+    }else{
+      productStageContainerClasses = productStageContainerClasses.concat(["column", "is-half"]);
+    }
+
+
+    // Editor Container formatting
+    let editorContainerClasses = ["editor"];
+    if (this.state.stageContext.stage == 0 ) {
+      editorContainerClasses.push("container");
+    }else{
+      editorContainerClasses = editorContainerClasses.concat(["column", "is-half"]);
+    }
+
+    // Body Container formatting and animations
+    let bodyContainerClasses = ["animated"];
+    if (this.state.stageContext.stage == 0) {
+      bodyContainerClasses.push("container");
+    }else{
+      bodyContainerClasses = bodyContainerClasses.concat(["columns", "container", "is-centered"]);
+    }
+    if (this.state.animationsContext.stageTransition0_1AnimationStage0BodyOut) {
+      bodyContainerClasses.push("fadeOutLeft");
+    }
+    if (this.state.animationsContext.stageTransition0_1AnimationStage1BodyIn) {
+      bodyContainerClasses.push("fadeInRight");
+    }
+
     return (
       <div className={"stage" + this.state.stageContext.stage}>
         <NavigationBar  />
 
         <StageContext.Provider      value={this.state.stageContext}       >
-        <AnimationsContext.Provider value={this.state.animationsContext}  >
-        <QRCodeAPIContext.Provider  value={this.state.qrcodeAPIContext}   >
+        <AnimationsContext.Provider value={this.state}  >
+        <QRCodeAPIContext.Provider  value={this.state}   >
 
         <Progressbar />
 
-        <div id="body_container" className={"animated " + bodyContainerClasses + " " + this.state.animationsContext.bodyStageTransitionAnimations} >
+        <div id="body_container" className={ bodyContainerClasses.join(" ")} >
           {
             this.state.stageContext.stage == 0 &&
-            <div className={"editor " + editorContainerClasses}>
+            <div className={editorContainerClasses.join(" ")}>
               <Editor />
             </div>
           }
 
-          <div className={"productStage " + productStageContainerClasses}>
+          <div className={productStageContainerClasses.join(" ")}>
             <br />
             { this.state.stageContext.stage == 1 && <br /> }
             <ProductStage />
@@ -293,7 +158,7 @@ class App extends React.Component {
 
           {
             this.state.stageContext.stage == 1 &&
-            <div className={"editor " + editorContainerClasses}>
+            <div className={editorContainerClasses.join(" ")}>
               <br />
               <Editor />
             </div>

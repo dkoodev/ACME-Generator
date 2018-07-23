@@ -18,20 +18,9 @@ class Editor1 extends React.Component {
   constructor(){
     super();
     this.state = {
-      iconRightClasses: "is-hidden",
-      titleAnimations: "animated",
-      spacingAnimations: "spacing ",
-      inputControlClasses: "",
-      inputStatusClasses: "",
-      chosenPixelColor: '000000',
-      chosenBackgroundColor: 'FFFFFF',
-      pixelColorGearLoading: false,
-      backgroundColorGearLoading: false,
       showAdvanced: false,
-      advancedButtonDisplay: "is-outlined",
       advancedColorTab : "pixel",
       advancedPickerColorOutput: "000000",
-      uploadedFileList: [],
       lockedColor: "",
       lockColorButtonClicked: false,
       lockedColorHex: "",
@@ -40,24 +29,28 @@ class Editor1 extends React.Component {
       warnings : [],
       showContrastPercentageViewer: false,
       contrastDifference: 0,
+      changes : 0,
     };
   }
 
+  showPixelTab(){ this.setState({ advancedColorTab: "pixel", }); }
 
-  shouldComponentUpdate(nextProps, nextState){
-    return  this.props.stage != nextProps.stage ||
-    this.state.advancedColorTab != nextState.advancedColorTab ||
-    this.state.showAdvanced != nextState.showAdvanced ||
-    this.state.lockColorButtonClicked != nextState.lockColorButtonClicked ||
-    this.props.extraTags != nextState.extraTags ||
-    this.state.contrastDifference != nextState.contrastDifference
-    ;
-  }
+  showBackgroundTab(){ this.setState({ advancedColorTab: "background", }); }
+
+  hideWarningBackgroundTab(){ this.setState({ warningIconPixelTab : false }); }
+
+  hideWarningPixelTab(){ this.setState({ warningIconBackgroundTab : false }); }
+
+  displayWarningBackgroundTab(){ this.setState({ warningIconPixelTab : true }); }
+
+  displayWarningPixelTab(){ this.setState({ warningIconBackgroundTab : true }); }
+
+  showContrastPercentageViewer(){ this.setState({ showContrastPercentageViewer : true }); }
+
+  hideContrastPercentageViewer(){ this.setState({ showContrastPercentageViewer : false }); }
 
 
   lockColorButtonOnClick(){
-    console.log("lockedcolorhex", this.state.advancedPickerColorOutput);
-
     if (!this.state.lockColorButtonClicked) {
       this.setState({
         lockedColor : this.state.advancedColorTab,
@@ -73,44 +66,6 @@ class Editor1 extends React.Component {
     }
   }
 
-  showPixelTab(){
-    this.setState({
-      advancedColorTab: "pixel",
-    });
-  }
-
-  showBackgroundTab(){
-    this.setState({
-      advancedColorTab: "background",
-    });
-  }
-
-
-
-  hideWarningBackgroundTab(){
-    this.setState({
-      warningIconPixelTab : false
-    });
-  }
-
-  hideWarningPixelTab(){
-    this.setState({
-      warningIconBackgroundTab : false
-    });
-  }
-
-  displayWarningBackgroundTab(){
-    this.setState({
-      warningIconPixelTab : true
-    });
-  }
-
-  displayWarningPixelTab(){
-    this.setState({
-      warningIconBackgroundTab : true
-    });
-  }
-
   addWarning( name, tagInfo){
     console.log("adding warning");
     let warningTag = {
@@ -122,7 +77,7 @@ class Editor1 extends React.Component {
     this.setState({
       warnings : newWarnings,
     });
-    this.props.setExtraTags(this.state.warnings);
+    this.props.qrcodeAPIContext.setWarningTags(this.state.warnings);
   }
 
   removeWarning(name){
@@ -131,14 +86,14 @@ class Editor1 extends React.Component {
         return item.type == "warning" && item.tagInfo.includes(name);
       })
     });
-    this.props.setExtraTags(this.state.warnings);
+    this.props.qrcodeAPIContext.setWarningTags(this.state.warnings);
   }
 
   removeAllWarnings(){
     this.setState({
       warnings : [],
     });
-    this.props.setExtraTags(this.state.warnings);
+    this.props.qrcodeAPIContext.setWarningTags(this.state.warnings);
   }
 
   compareContrast(lockedColor, unlockedColor) {
@@ -197,18 +152,6 @@ class Editor1 extends React.Component {
     return false;
   }
 
-  showContrastPercentageViewer(){
-    this.setState({
-      showContrastPercentageViewer: true
-    });
-  }
-
-  hideContrastPercentageViewer(){
-    this.setState({
-      showContrastPercentageViewer: false
-    });
-  }
-
   advancedPickerColorChange(color){
     if (! this.state.lockColorButtonClicked) return;
     let colorInHex = color.hex.toUpperCase().replace('#','');
@@ -234,9 +177,9 @@ class Editor1 extends React.Component {
       }
     }else{
       if (this.state.advancedColorTab == 'pixel') {
-        this.isColorValid('', colorInHex, this.state.chosenBackgroundColor);
+        this.isColorValid('', colorInHex, this.props.qrcodeAPIContext.qrcodeInfo.backgroundColor);
       }else{
-        this.isColorValid('', this.state.chosenPixelColor, colorInHex);
+        this.isColorValid('', this.props.qrcodeAPIContext.qrcodeInfo.pixelColor, colorInHex);
       }
     }
 
@@ -248,75 +191,184 @@ class Editor1 extends React.Component {
   }
 
   pixelColorChangeComplete(color){
+    // Process input
     let colorInHex = color.hex.toUpperCase().replace('#','');
-    let colorInHexBackground = this.state.chosenBackgroundColor;
 
-    if (colorInHex == this.state.chosenPixelColor) {
+    // Check redundancy
+    if (colorInHex == this.props.qrcodeAPIContext.qrcodeInfo.pixelColor) {
       return;
     }
 
-    this.props.customTagPixelColorLoading();
-    this.setState({pixelColorGearLoading : true});
+    // Update states and flags
+    this.props.qrcodeAPIContext.setPixelColor(colorInHex);
+    this.setState((prevState)=>{changes : prevState.changes + 1});
+    let prevChanges = this.state.changes;
 
-    this.setState({ chosenPixelColor: colorInHex });
-    this.props.changePixelColor(colorInHex);
+    // Enabling Animations
+    this.props.qrcodeAPIContext.updateTag('pixelColor', colorInHex, true, false, true);
+
+    // Buffer waiting for additional change
     setTimeout(async ()=>{
-      if(colorInHexBackground == this.state.chosenBackgroundColor &&
-         colorInHex == this.state.chosenPixelColor
-      ){
-        await this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
-        this.props.customTagPixelColorDone();
-        this.setState({pixelColorGearLoading : false});
-
-        if (this.state.backgroundColorGearLoading) {
-          this.props.customTagBackgroundColorDone();
-          this.setState({backgroundColorGearLoading : false});
+      if( colorInHex == this.props.qrcodeAPIContext.qrcodeInfo.pixelColor
+        && prevChanges == this.state.changes
+      ) {
+        // Color didn't change for 1 second
+        // No additional changes for 1 second
+        this.setState((prevState)=>{changes : 0 });
+        this.props.qrcodeAPIContext.incrementRequestCount();
+        if (await this.props.qrcodeAPIContext.requestStatic()) {
+          // No additional changes while requesting
+          this.props.qrcodeAPIContext.clearAllTags();
         }
+        this.props.qrcodeAPIContext.decrementRequestCount();
       }
     }, 1000);
   }
 
   backgroundColorChangeComplete(color){
+    // Process input
     let colorInHex = color.hex.toUpperCase().replace('#','');
-    let colorInHexPixel = this.state.chosenPixelColor;
-
-    if (colorInHex == this.state.chosenBackgroundColor) {
+    // Check redundancy
+    if (colorInHex == this.props.qrcodeAPIContext.qrcodeInfo.backgroundColor) {
       return;
     }
+    // Update states and flags
+    this.props.qrcodeAPIContext.setBackgroundColor(colorInHex);
+    this.setState((prevState)=>{changes : prevState.changes + 1});
+    let prevChanges = this.state.changes;
 
-    this.props.customTagBackgroundColorLoading();
-    this.setState({backgroundColorGearLoading : true});
+    // Enabling Animations
+    this.props.qrcodeAPIContext.updateTag('backgroundColor', colorInHex, true, false, true);
 
-    this.props.changeBackgroundColor(colorInHex);
-    this.setState({ chosenBackgroundColor: colorInHex });
+    // Buffer waiting for additional change
     setTimeout(async ()=>{
-      if(colorInHex == this.state.chosenBackgroundColor &&
-         colorInHexPixel == this.state.chosenPixelColor
-      ){
-        await this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
-        this.props.customTagBackgroundColorDone();
-        this.setState({backgroundColorGearLoading : false});
-
-        if (this.state.pixelColorGearLoading) {
-          this.props.customTagPixelColorDone();
-          this.setState({pixelColorGearLoading : false});
+      if( colorInHex == this.props.qrcodeAPIContext.qrcodeInfo.backgroundColor
+        && prevChanges == this.state.changes
+      ) {
+        // Color didn't change for 1 second
+        // No additional changes for 1 second
+        this.setState((prevState)=>{changes : 0 });
+        this.props.qrcodeAPIContext.incrementRequestCount();
+        if (await this.props.qrcodeAPIContext.requestStatic()) {
+          // No additional changes while requesting
+          this.props.qrcodeAPIContext.clearAllTags();
         }
+        this.props.qrcodeAPIContext.decrementRequestCount();
       }
     }, 1000);
   }
 
+
   toggleAdvanced(){
-    if (this.state.showAdvanced) {
-      this.setState({
-        showAdvanced: false,
-        advancedButtonDisplay : "is-outlined",
-      });
-    }else{
-      this.setState({
-        showAdvanced: true,
-        advancedButtonDisplay : "",
-      });
+    this.setState({
+      showAdvanced: this.state.showAdvanced ? false : true,
+    });
+  }
+
+  resolutionSelectOptionsOnChange(e){
+    // Process input
+    let resolutionValue = e.target.value.replace('px','');
+    resolutionValue = parseInt(resolutionValue);
+
+    // Check redundancy
+    if (resolutionValue == this.props.qrcodeAPIContext.qrcodeInfo.resolutionValue) {
+      return;
     }
+
+    // Update states and flags
+    this.props.qrcodeAPIContext.setResolutionValue(resolutionValue);
+    this.setState((prevState)=>{changes : prevState.changes + 1});
+    let prevChanges = this.state.changes;
+
+    // Enabling Animations
+    this.props.qrcodeAPIContext.updateTag('resolution', e.target.value, true, false, true);
+
+    // Buffer waiting for additional change
+    setTimeout(async ()=>{
+      if( resolutionValue == this.props.qrcodeAPIContext.qrcodeInfo.resolutionValue
+        && prevChanges == this.state.changes
+      ) {
+        // resolution didn't change for 1 second
+        // No additional changes for 1 second
+        this.setState((prevState)=>{changes : 0 });
+        this.props.qrcodeAPIContext.incrementRequestCount();
+        if (await this.props.qrcodeAPIContext.requestStatic()) {
+          // No additional changes while requesting
+          this.props.qrcodeAPIContext.clearAllTags();
+        }
+        this.props.qrcodeAPIContext.decrementRequestCount();
+      }
+    }, 1000);
+  }
+
+  stencilOptionOnChange(e){
+    // Process input
+    let stencil = e.target.checked;
+
+    // Check redundancy
+    if (stencil == this.props.qrcodeAPIContext.qrcodeInfo.stencil) {
+      return;
+    }
+
+    // Update states and flags
+    this.props.qrcodeAPIContext.setStencil(stencil);
+    this.setState((prevState)=>{changes : prevState.changes + 1});
+    let prevChanges = this.state.changes;
+
+    // Enabling Animations
+    this.props.qrcodeAPIContext.updateTag('stencil', "Colors in the background to show transparency", true, false, true);
+
+    // Buffer waiting for additional change
+    setTimeout(async ()=>{
+      if( stencil == this.props.qrcodeAPIContext.qrcodeInfo.stencil
+        && prevChanges == this.state.changes
+      ) {
+        // StencilOption didn't change for 1 second
+        // No additional changes for 1 second
+        this.setState((prevState)=>{changes : 0 });
+        this.props.qrcodeAPIContext.incrementRequestCount();
+        if (await this.props.qrcodeAPIContext.requestStatic()) {
+          // No additional changes while requesting
+          this.props.qrcodeAPIContext.clearAllTags();
+        }
+        this.props.qrcodeAPIContext.decrementRequestCount();
+      }
+    }, 1000);
+  }
+
+  tileShapeSelectOptionsOnChange(e){
+    // Process input
+    let tileShape = e.target.value.toLowerCase();
+
+    // Check redundancy
+    if (tileShape == this.props.qrcodeAPIContext.qrcodeInfo.tileShape) {
+      return;
+    }
+
+    // Update states and flags
+    this.props.qrcodeAPIContext.setTileShape(tileShape);
+    this.setState((prevState)=>{changes : prevState.changes + 1});
+    let prevChanges = this.state.changes;
+
+    // Enabling Animations
+    this.props.qrcodeAPIContext.updateTag('tileShape', "Tiles are dots", true, false, true);
+
+    // Buffer waiting for additional change
+    setTimeout(async ()=>{
+      if( tileShape == this.props.qrcodeAPIContext.qrcodeInfo.tileShape
+        && prevChanges == this.state.changes
+      ) {
+        // Tileshape didn't change for 1 second
+        // No additional changes for 1 second
+        this.setState((prevState)=>{changes : 0 });
+        this.props.qrcodeAPIContext.incrementRequestCount();
+        if (await this.props.qrcodeAPIContext.requestStatic()) {
+          // No additional changes while requesting
+          this.props.qrcodeAPIContext.clearAllTags();
+        }
+        this.props.qrcodeAPIContext.decrementRequestCount();
+      }
+    }, 1000);
   }
 
   render() {
@@ -335,15 +387,22 @@ class Editor1 extends React.Component {
       lockColorButtonDisabled = "disabled";
     }
 
-    let advancedPickerColorInput = this.state.advancedColorTab == "pixel" ? this.state.chosenPixelColor : this.state.chosenBackgroundColor;
+    let advancedPickerColorInput = this.state.advancedColorTab == "pixel" ? this.props.qrcodeAPIContext.qrcodeInfo.pixelColor : this.props.qrcodeAPIContext.qrcodeInfo.backgroundColor;
 
     let advancedPickerClasses = "";
     let lockButtonText = "Lock Color";
 
-    if (this.state.lockedColor == this.state.advancedColorTab) {
+    if (this.state.lockedColor == this.state.advancedColorTab  ) {
       advancedPickerClasses = "is-unclickable";
       lockButtonText = "Unlock Color";
     }
+
+    let colorPickerClasses = "";
+
+    if (this.props.qrcodeAPIContext.qrcodeInfo.stencil) {
+      colorPickerClasses = "is-unclickable";
+    }
+
     let lockColorButtonClasses = this.state.lockColorButtonClicked ? "" : "is-outlined";
     let advancedPixelTabLockIconDisplay = this.state.lockedColor == "pixel" ? "" : "is-hidden";
     let advancedPixelTabWarningIconDisplay = this.state.warningIconPixelTab ? "" : "is-hidden";
@@ -352,11 +411,12 @@ class Editor1 extends React.Component {
 
     let contrastPercentageViewerClasses = this.state.contrastDifference >= 40 ? "is-success" : "is-warning";
 
+    let advancedButtonDisplay = this.state.showAdvanced ? "" : "is-outlined";
     return (
       <div className="editor1 container ">
         <div className="title">
           Add your personal touch
-          <a className={"button is-info is-small advancedButton " + this.state.advancedButtonDisplay}
+          <a className={"button is-info is-small advancedButton " + advancedButtonDisplay}
             onClick={this.toggleAdvanced.bind(this)}>
             Advanced
           </a>
@@ -364,7 +424,7 @@ class Editor1 extends React.Component {
         {
           !this.state.showAdvanced &&
           <div className="columns">
-            <div className="column ">
+            <div className={"column " + colorPickerClasses}>
               <span>
                 Pixel Color
               </span>
@@ -396,8 +456,8 @@ class Editor1 extends React.Component {
         {
           this.state.showAdvanced &&
           <div className="columns is-half">
-            <div className="column">
-              <div className="advancedOptions" >
+            <div className={"column " + colorPickerClasses}>
+              <div className={"advancedOptions "} >
                 <div className="tabs is-centered is-fullwidth">
                   <ul>
                     <li className={advancedPixelTabDisplay}>
@@ -448,39 +508,32 @@ class Editor1 extends React.Component {
               </div>
             </div>
             <div className="column is-half">
-                {/* <input type="checkbox" /> Transparent Background
-                <br />
-                <br />
-                Resolution:
-                <div className="select">
-                  <select>
-                    <option>150px</option>
-                    <option>270px</option>
-                    <option>400px</option>
-                  </select>
-                </div>
-                <br />
-                <br />
-                Pixel Shape:
-                <div className="select">
-                  <select>
-                    <option>Square</option>
-                    <option>Circle</option>
-                  </select>
-                </div>
-                <br /> */}
-
+              <input type="checkbox" onChange={this.stencilOptionOnChange.bind(this)}/> Transparent Background
+              <br />
+              <br />
+              Resolution:
+              <div className="select">
+                <select onChange={this.resolutionSelectOptionsOnChange.bind(this)}>
+                  <option>400px</option>
+                  <option>270px</option>
+                  <option>150px</option>
+                </select>
+              </div>
+              <br />
+              <br />
+              Pixel Shape:
+              <div className="select">
+                <select onChange={this.tileShapeSelectOptionsOnChange.bind(this)}>
+                  <option>Square</option>
+                  <option>Circle</option>
+                </select>
+              </div>
+              <br />
             </div>
-
           </div>
-
         }
-
         <br />
-
-
         <NextButton />
-
       </div>
     );
   }

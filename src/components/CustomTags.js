@@ -15,7 +15,13 @@ class CustomTags extends React.Component {
       return item.tagInfo != "" && item.type != "";
     });
     const Tags = tags.map((item,index) =>
-        <CustomTag key={index} id={index} type={item.type} tagInfo={item.tagInfo} />
+        <CustomTag key={index} id={index}
+          type={item.type}
+          tagInfo={item.tagInfo}
+          gearLoadingAnimationIn={item.gearLoadingAnimationIn}
+          gearLoadingAnimationOut={item.gearLoadingAnimationOut}
+          gearLoadingAnimationDisplay={item.gearLoadingAnimationDisplay}
+        />
     );
     return (
       <div className="field is-grouped is-grouped-multiline">

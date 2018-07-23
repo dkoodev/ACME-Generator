@@ -13,62 +13,29 @@ class Editor0 extends React.Component {
   constructor(){
     super();
     this.state = {
-      iconRightClasses: "is-hidden",
-      titleAnimations: "animated",
-      spacingAnimations: "",
-      inputControlClasses: "",
-      inputStatusClasses: "",
-      nextButtonDisplay: "is-hidden",
+      titleAnimations: false,
       textAreaInputValue: "",
+      requestLoading : false,
+      requestSuccess : false,
     }
   }
 
-  spacingDisappear(){
+  requestLoadingStart(){
     this.setState({
-      spacingAnimations:  " squish ",
+      requestLoading : true,
+      requestSuccess : false,
     });
   }
 
-  spacingAppear(){
+  requestLoadingDone(){
     this.setState({
-      spacingAnimations:  "" ,
+      requestLoading : false
     });
-  }
-
-  loadingWheelAppear(){
-    this.setState({
-      inputControlClasses: "is-loading" ,
-    });
-  }
-
-  loadingWheelDisappear(){
-    this.setState({
-      inputControlClasses: "" ,
-    });
-  }
-
-  checkIconRightAppear(){
-    this.setState({
-      iconRightClasses: "",
-    });
-  }
-
-  checkIconRightDisappear(){
-    this.setState({
-      iconRightClasses: "is-hidden",
-    });
-  }
-
-  textAreaGreenAppear(){
-    this.setState({
-      inputStatusClasses: "is-success",
-    });
-  }
-
-  textAreaGreenDisappear(){
-    this.setState({
-      inputStatusClasses: "",
-    });
+    if (this.state.textAreaInputValue != "") {
+      this.setState({
+        requestSuccess : true,
+      });
+    }
   }
 
   inputChangeHandler(e){
@@ -78,65 +45,53 @@ class Editor0 extends React.Component {
       textAreaInputValue: inputValue
     });
 
-    this.props.textToConvertJS(inputValue);
+    this.props.qrcodeAPIContext.textToConvertJS(inputValue);
 
-    if(inputValue == ""){
-      this.spacingAppear();
-    }else{
-      this.spacingDisappear();
-    }
-
-    this.loadingWheelAppear();
-    this.checkIconRightDisappear();
-    this.textAreaGreenDisappear();
-    this.props.nextButtonDisappear();
-
+    this.requestLoadingStart();
+    this.props.animationsContext.nextButtonDisable();
     // Check if typing stopped for at least 1.5 seconds
     setTimeout(()=>{
       if(inputValue == this.state.textAreaInputValue){
         // Asking for QRcode only when user stops typing for 1.5 seconds
-        this.props.textToConvertAPI(inputValue)
+        this.props.qrcodeAPIContext.textToConvertAPI(inputValue)
           .then(()=> {
-            if(this.state.textAreaInputValue == ""){
-              this.checkIconRightDisappear();
-              this.textAreaGreenDisappear();
-            }else {
-              this.checkIconRightAppear();
-              this.textAreaGreenAppear();
-            }
-            this.loadingWheelDisappear();
-            this.props.nextButtonAppear();
+            this.requestLoadingDone();
+            this.props.animationsContext.nextButtonAble();
           });
       }
     }, 1500);
   }
 
-
   componentDidMount(){
-    let animate = ()=>{
-      this.setState((prevState,props)=> {return {
-        titleAnimations: prevState.titleAnimations + " bounce",
-      }});
-    }
-    setTimeout(animate, 1000);
+    setTimeout(()=>{
+      this.setState({
+        titleAnimations: true,
+      });
+    }, 1000);
   }
 
   render() {
+    // maybe clean up code by putting all classes into array and doing array.join(" ");
+    let spacingAnimations   = this.state.textAreaInputValue !=  "" ? "squish" : "";
+    let inputControlClasses = this.state.requestLoading     ?   "is-loading" : "";
+    let iconRightClasses    = this.state.requestLoading     ||  this.state.textAreaInputValue == "" ? "is-hidden" : "";
+    let inputStatusClasses  = !this.state.requestLoading    &&  this.state.requestSuccess ? "is-success" : "";
+    let titleAnimations     = this.state.titleAnimations    ?   " bounce" : "";
 
     return (
       <div className={ "editor0 "}>
-        <div className={"field" + this.state.spacingAnimations} >
-            <div className={"title is-2 has-text-grey-dark has-text-centered " + this.state.titleAnimations} >
+        <div className={"field " + spacingAnimations} >
+            <div className={"title is-2 has-text-grey-dark has-text-centered " + titleAnimations} >
               Encode a message or a website
             </div>
-          <div className={"editor0-textarea control has-icons-left has-icons-right is-large " + this.state.inputControlClasses} >
+          <div className={"editor0-textarea control has-icons-left has-icons-right is-large " + inputControlClasses} >
             <Tooltip title="Enter text or link to encode" placement="left" mouseLeaveDelay={0}>
-              <input className={"input is-large is-rounded " + this.state.inputStatusClasses} maxLength="2953" onChange={this.inputChangeHandler.bind(this)} type="text" placeholder="https:// " />
+              <input className={"input is-large is-rounded " + inputStatusClasses} maxLength="2953" onChange={this.inputChangeHandler.bind(this)} type="text" placeholder="https:// " />
             </Tooltip>
             <span className="icon is-medium is-left">
               <i className="fas fa-qrcode"></i>
             </span>
-            <span className={"icon is-medium is-right " + this.state.iconRightClasses}>
+            <span className={"icon is-medium is-right " + iconRightClasses}>
               <i className="fas fa-check "></i>
             </span>
           </div>
