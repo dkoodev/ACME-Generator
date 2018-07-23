@@ -44,7 +44,7 @@ class Editor0 extends React.Component {
     this.setState({
       textAreaInputValue: inputValue
     });
-
+    this.props.qrcodeAPIContext.updateTag('message',inputValue, false, false, false );
     this.props.qrcodeAPIContext.textToConvertJS(inputValue);
 
     this.requestLoadingStart();
