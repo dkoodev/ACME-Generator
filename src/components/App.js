@@ -23,7 +23,7 @@ class App extends React.Component {
 
     this.state = {
       stageContext:{
-        stage : 1,
+        stage : 0,
         nextStage : this.nextStage.bind(this),
         prevStage : this.prevStage.bind(this),
       },
@@ -56,18 +56,18 @@ class App extends React.Component {
         setWarningTags : QRCodeAPIContextFunctions.setWarningTags.bind(this),
         tags : [
           // DELETE next part for production
-          {
-            type : "message",
-            tagInfo : "dkoo testing",
-            gearLoadingAnimationIn : false,
-            gearLoadingAnimationOut : false,
-            gearLoadingAnimationDisplay : false,
-          },
+          // {
+          //   type : "message",
+          //   tagInfo : "dkoo testing",
+          //   gearLoadingAnimationIn : false,
+          //   gearLoadingAnimationOut : false,
+          //   gearLoadingAnimationDisplay : false,
+          // },
         ],
         warningTags : [],
         qrcodeInfo : {
           orderId : "",
-          message : "dkoo testing",
+          message : "",
           pixelColor : "000000",
           backgroundColor : "FFFFFF",
           resolutionValue : 400,
