@@ -8,6 +8,7 @@ import {withQRCodeAPIContext, QRCodeAPIContext} from '../Contexts/QRCodeAPIConte
 
 // Components
 import { Tooltip } from 'antd';
+import MediaQuery from 'react-responsive';
 
 class Editor0 extends React.Component {
   constructor(){
@@ -85,9 +86,26 @@ class Editor0 extends React.Component {
               Encode a message or a website
             </div>
           <div className={"editor0-textarea control has-icons-left has-icons-right is-large " + inputControlClasses} >
-            <Tooltip title="Enter text or link to encode" placement="left" mouseLeaveDelay={0}>
-              <input className={"input is-large is-rounded " + inputStatusClasses} maxLength="2953" onChange={this.inputChangeHandler.bind(this)} type="text" placeholder="https:// " />
-            </Tooltip>
+	    
+	    <MediaQuery minDeviceWidth={700}>
+	    	<input className={"input is-large is-rounded " + inputStatusClasses} 
+		    maxLength="2953" 
+		    onChange={this.inputChangeHandler.bind(this)} 
+		    type="text" 
+	            placeholder="https:// " />
+	    </MediaQuery>
+  	    
+	    <MediaQuery maxDeviceWidth={700}>
+		    <Tooltip title="Enter text or link to encode" placement="left" mouseLeaveDelay={0}>
+		    <input className={"input is-large is-rounded " + inputStatusClasses} 
+			    maxLength="2953" 
+			    onChange={this.inputChangeHandler.bind(this)} 
+			    type="text" 
+			    placeholder="https:// " />
+		    </Tooltip>
+
+	    </MediaQuery>
+
             <span className="icon is-medium is-left">
               <i className="fas fa-qrcode"></i>
             </span>
