@@ -23,7 +23,7 @@ class App extends React.Component {
 
     this.state = {
       stageContext:{
-        stage : 0,
+        stage : 2,
         nextStage : this.nextStage.bind(this),
         prevStage : this.prevStage.bind(this),
       },
@@ -44,8 +44,10 @@ class App extends React.Component {
         setPixelColor : QRCodeAPIContextFunctions.setPixelColor.bind(this),
         setBackgroundColor : QRCodeAPIContextFunctions.setBackgroundColor.bind(this),
         requestStatic : QRCodeAPIContextFunctions.requestStatic.bind(this),
+        requestAnimation : QRCodeAPIContextFunctions.requestAnimation.bind(this),
         setResolutionValue : QRCodeAPIContextFunctions.setResolutionValue.bind(this),
         setStencil : QRCodeAPIContextFunctions.setStencil.bind(this),
+        setUserUploadedImageUrl : QRCodeAPIContextFunctions.setUserUploadedImageUrl.bind(this),
         setTileShape: QRCodeAPIContextFunctions.setTileShape.bind(this),
         setTag : QRCodeAPIContextFunctions.setTags.bind(this),
         updateTag : QRCodeAPIContextFunctions.updateTag.bind(this),
@@ -54,27 +56,33 @@ class App extends React.Component {
         clearRequestCount : QRCodeAPIContextFunctions.clearRequestCount.bind(this),
         clearAllTags : QRCodeAPIContextFunctions.clearAllTags.bind(this),
         setWarningTags : QRCodeAPIContextFunctions.setWarningTags.bind(this),
+        setIsAnimation : QRCodeAPIContextFunctions.setIsAnimation.bind(this),
         tags : [
-          // DELETE next part for production
-          // {
-          //   type : "message",
-          //   tagInfo : "dkoo testing",
-          //   gearLoadingAnimationIn : false,
-          //   gearLoadingAnimationOut : false,
-          //   gearLoadingAnimationDisplay : false,
-          // },
+          {
+            type : "message",
+            tagInfo : "dkoo testing",
+          },
+          {
+            type : "backgroundColor",
+            tagInfo : "3f3f3f",
+          },
+
         ],
         warningTags : [],
         qrcodeInfo : {
           orderId : "",
-          message : "",
+          message : "dkoo testing",
           pixelColor : "000000",
-          backgroundColor : "FFFFFF",
+          // backgroundColor : "FFFFFF",
+          backgroundColor : "3F3F3F",
           resolutionValue : 400,
           stencil : false,
           tileShape : "",
-          url : "",
+          url : "https://api.acme.codes/orders/1532558177_PAQCR97Q/frames/1",
           requestCount : 0,
+          isAnimation : false,
+          userUploadedImageUrl : "",
+          userUploadedText : "",
         },
       },
     }
@@ -98,7 +106,6 @@ class App extends React.Component {
 
 
   render() {
-
     // Product Stage container formatting
     let productStageContainerClasses = ["productStage"];
     if (this.state.stageContext.stage == 0) {
@@ -157,7 +164,7 @@ class App extends React.Component {
           </div>
 
           {
-            this.state.stageContext.stage == 1 &&
+            this.state.stageContext.stage != 0 &&
             <div className={editorContainerClasses.join(" ")}>
               <br />
               <Editor />

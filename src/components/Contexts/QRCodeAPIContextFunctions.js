@@ -23,7 +23,6 @@ exports.textToConvertAPI = async function(text){
     let orderId = await APIDriver.requestPNGOnly(text);
     qrcodeAPIContext.qrcodeInfo.orderId = orderId;
     qrcodeAPIContext.qrcodeInfo.url = await APIDriver.fetchPNG(orderId, 1);
-
   }else {
     qrcodeAPIContext.qrcodeInfo.orderId = "";
     qrcodeAPIContext.qrcodeInfo.url = "";
@@ -74,6 +73,36 @@ exports.requestStatic = async function(){
   return true;
 }
 
+exports.requestAnimation = async function(){
+  console.log("request animation");
+  this.state.qrcodeAPIContext.setIsAnimation(true);
+
+  let prevState = this.state;
+  let qrcodeAPIContext = prevState.qrcodeAPIContext;
+
+  let orderId = await APIDriver.requestAnimation(this.state.qrcodeAPIContext.qrcodeInfo);
+  if (orderId == -1) {
+    console.log("something went wrong with requestStaticPng");
+    return;
+  }
+  let progress = 0;
+  while( progress < 100 && this.state.qrcodeAPIContext.qrcodeInfo.isAnimation){
+    progress = await APIDriver.checkProgressAnimation(orderId);
+    this.state.qrcodeAPIContext.updateTag('userUploadedImage', "Image will be animated when animation is chosen" , false, false, true , progress);
+  }
+  if (!this.state.qrcodeAPIContext.qrcodeInfo.isAnimation) {
+    this.state.qrcodeAPIContext.updateTag('userUploadedImage', "" , false, false, false);
+    return;
+  }
+  let url = await APIDriver.fetchAnimation(orderId);
+
+  qrcodeAPIContext.qrcodeInfo.orderId = orderId;
+  qrcodeAPIContext.qrcodeInfo.url = url;
+
+  this.setState({
+    qrcodeAPIContext : qrcodeAPIContext,
+  });
+}
 
 exports.setResolutionValue = function(value){
   let qrcodeAPIContext = this.state.qrcodeAPIContext;
@@ -100,6 +129,16 @@ exports.setTileShape = function(value){
   });
 }
 
+exports.setUserUploadedImageUrl = function(value) {
+  let qrcodeAPIContext = this.state.qrcodeAPIContext;
+  qrcodeAPIContext.qrcodeInfo.userUploadedImageUrl = value;
+  this.setState({
+    qrcodeAPIContext : qrcodeAPIContext
+  });
+}
+
+
+
 exports.setTags = function(newTags){
   let qrcodeAPIContext = this.state.qrcodeAPIContext;
   qrcodeAPIContext.qrcodeInfo.tags = newTags;
@@ -116,7 +155,7 @@ exports.setWarningTags = function(newWarningTags){
   });
 }
 
-exports.updateTag = function(type, tagInfo, gearLoadingAnimationIn, gearLoadingAnimationOut, gearLoadingAnimationDisplay){
+exports.updateTag = function(type, tagInfo, gearLoadingAnimationIn, gearLoadingAnimationOut, gearLoadingAnimationDisplay, data=""){
   console.log("Updating Tag");
   let qrcodeAPIContext = this.state.qrcodeAPIContext;
   if (qrcodeAPIContext.tags.some((item)=>{ return item.type == type})) {
@@ -132,6 +171,7 @@ exports.updateTag = function(type, tagInfo, gearLoadingAnimationIn, gearLoadingA
     gearLoadingAnimationIn : gearLoadingAnimationIn,
     gearLoadingAnimationOut : gearLoadingAnimationOut,
     gearLoadingAnimationDisplay : gearLoadingAnimationDisplay,
+    data : data,
   });
   this.setState({ qrcodeAPIContext : qrcodeAPIContext });
 }
@@ -164,5 +204,13 @@ exports.clearAllTags = function(){
         this.state.qrcodeAPIContext.updateTag(item.type, item.tagInfo, false, false, false);
       }, 700);
     }
+  });
+}
+
+exports.setIsAnimation = function(value ){
+  let qrcodeAPIContext = this.state.qrcodeAPIContext;
+  qrcodeAPIContext.qrcodeInfo.isAnimation = value;
+  this.setState({
+    qrcodeAPIContext : qrcodeAPIContext
   });
 }

@@ -16,128 +16,60 @@ class Editor2 extends React.Component {
   constructor(){
     super();
     this.state = {
-      iconRightClasses: "is-hidden",
-      titleAnimations: "animated",
-      spacingAnimations: "spacing ",
-      inputControlClasses: "",
-      inputStatusClasses: "",
-      chosenPixelColor: '000000',
-      chosenBackgroundColor: 'FFFFFF',
-      pixelColorGearLoading: false,
-      backgroundColorGearLoading: false,
-      showAdvanced: true,
-      advancedButtonDisplay: "is-outlined",
-      advancedPixelTabDisplay: "is-active",
-      advancedBackgroundTabDisplay:"",
-      advancedPickerColor: "",
-      uploadedFileList: [],
+      uploadTab : "image",
+      uploadedFile : {},
+      uploadedFileList : [],
     };
   }
 
-  showPixelTab(){
+  showTextUploadTab(){
+    this.setState({uploadTab : "text"});
+  }
+
+  showImageUploadTab(){
+    this.setState({uploadTab : "image"});
+  }
+
+  imageUploadingDone(info){
+    console.log("status : done ", info);
+    message.success(`${info.file.name} file uploaded successfully.`);
+
     this.setState({
-      advancedPixelTabDisplay: "is-active",
-      advancedBackgroundTabDisplay: "",
-      advancedPickerColor: this.state.chosenPixelColor,
+      uploadedFileList : info.fileList,
+      uploadedFile : info.file,
     });
-
+    this.props.qrcodeAPIContext.setUserUploadedImageUrl("https://acme.codes" + info.file.response.filepath);
+    console.log("qrcodeInfo.userUploadedImageUrl : ",this.props.qrcodeAPIContext.qrcodeInfo.userUploadedImageUrl);
+    this.props.qrcodeAPIContext.requestAnimation();
   }
 
-  showBackgroundTab(){
+  imageUploadingError(info){
+    console.log("status : error", info);
+    message.error(`${info.file.name} file upload failed.`);
+
     this.setState({
-      advancedBackgroundTabDisplay: "is-active",
-      advancedPixelTabDisplay: "",
-      advancedPickerColor: this.state.chosenBackgroundColor,
+      uploadedFileList : [],
+      uploadedFile : {},
     });
   }
 
-  advancedPickerColorChangeComplete(color){
-    if (this.state.advancedPixelTabDisplay == "is-active") {
-      this.pixelColorChangeComplete(color);
-    }else{
-      this.backgroundColorChangeComplete(color);
-    }
+  imageUploadingHandler(info){
+    console.log("status : uploading", info);
+    this.props.qrcodeAPIContext.updateTag('userUploadedImage', 'Image will be animated soon', true, false, true);
   }
 
-  pixelColorChangeComplete(color){
-    let colorInHex = color.hex.toUpperCase().replace('#','');
-    let colorInHexBackground = this.state.chosenBackgroundColor;
-
-    if (colorInHex == this.state.chosenPixelColor) {
-      return;
-    }
-
-    this.props.customTagPixelColorLoading();
-    this.setState({pixelColorGearLoading : true});
-
-    this.setState({ chosenPixelColor: colorInHex });
-    this.props.changePixelColor(colorInHex);
-    setTimeout(async ()=>{
-      if(colorInHexBackground == this.state.chosenBackgroundColor &&
-         colorInHex == this.state.chosenPixelColor
-      ){
-        await this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
-        this.props.customTagPixelColorDone();
-        this.setState({pixelColorGearLoading : false});
-
-        if (this.state.backgroundColorGearLoading) {
-          this.props.customTagBackgroundColorDone();
-          this.setState({backgroundColorGearLoading : false});
-        }
-      }
-    }, 1000);
-  }
-
-  backgroundColorChangeComplete(color){
-    let colorInHex = color.hex.toUpperCase().replace('#','');
-    let colorInHexPixel = this.state.chosenPixelColor;
-
-    if (colorInHex == this.state.chosenBackgroundColor) {
-      return;
-    }
-
-    this.props.customTagBackgroundColorLoading();
-    this.setState({backgroundColorGearLoading : true});
-
-    this.props.changeBackgroundColor(colorInHex);
-    this.setState({ chosenBackgroundColor: colorInHex });
-    setTimeout(async ()=>{
-      if(colorInHex == this.state.chosenBackgroundColor &&
-         colorInHexPixel == this.state.chosenPixelColor
-      ){
-        await this.props.requestStaticWithColor(this.state.chosenBackgroundColor,this.state.chosenPixelColor);
-        this.props.customTagBackgroundColorDone();
-        this.setState({backgroundColorGearLoading : false});
-
-        if (this.state.pixelColorGearLoading) {
-          this.props.customTagPixelColorDone();
-          this.setState({pixelColorGearLoading : false});
-        }
-      }
-    }, 1000);
-  }
-
-  toggleAdvanced(){
-    console.log(this.state.showAdvanced);
-    if (this.state.showAdvanced) {
+  imageNotUploadingHandler(info){
+    console.log("status : not uploading", info);
+    if (info.fileList.length == 0) {
       this.setState({
-        showAdvanced: false,
-        advancedButtonDisplay : "is-outlined",
+        uploadedFileList : [],
+        uploadedFile : {},
       });
-    }else{
-      this.setState({
-        showAdvanced: true,
-        advancedButtonDisplay : "",
-        advancedPickerColor : this.state.advancedPixelTabDisplay == "is-active" ? this.state.chosenPixelColor : this.state.chosenBackgroundColor,
-      });
+      this.props.qrcodeAPIContext.setIsAnimation(false);
+      this.props.qrcodeAPIContext.setUserUploadedImageUrl("");
+      this.props.qrcodeAPIContext.updateTag('userUploadedImage', '', true, false, true);
+      this.props.qrcodeAPIContext.requestStatic();
     }
-  }
-
-  shouldComponentUpdate(nextProps, nextState){
-    return  this.props.stage != nextProps.stage ||
-            this.state.advancedPickerColor != nextState.advancedPickerColor ||
-            this.state.showAdvanced != nextState.showAdvanced;
-    ;
   }
 
   render() {
@@ -145,78 +77,61 @@ class Editor2 extends React.Component {
 
     const draggerProps = {
       name: 'file',
-      multiple: true, // TODO: make to state variable so only available on advanced
+      multiple: false, // TODO: make to state variable so only available on advanced
       action: 'https://acme.codes/coderunner/upload',
-      onChange(info) {
+      onChange : (info) => {
         const status = info.file.status;
-        if (status !== 'uploading') {
-          console.log(info.file, info.fileList);
-        }
-        if (status === 'done') {
-          message.success(`${info.file.name} file uploaded successfully.`);
-          this.setState({
-            uploadedFileList : info.fileList
-          });
-          console.log("UPLOADED: ", this.state.uploadedFileList);
-        } else if (status === 'error') {
-          message.error(`${info.file.name} file upload failed.`);
-        }
+        console.log("onChange status: " + status ,info);
+        if (status !== 'uploading')   { this.imageNotUploadingHandler(info);  }
+        else                          { this.imageUploadingHandler(info);     }
+
+        if (status === 'done')        { this.imageUploadingDone(info);        }
+        else if (status === 'error')  { this.imageUploadingError(info);       }
       },
     };
+
+    let uploadTextDisplay = this.state.uploadTab == "text" ? "is-active" : "";
+    let uploadImageDisplay = this.state.uploadTab == "image" ? "is-active" : "";
 
     return (
       <div className="editor1 container ">
         <div className="title">
-          Add your personal touch
-          <a className={"button is-info is-small advancedButton " + this.state.advancedButtonDisplay}
-            onClick={this.toggleAdvanced.bind(this)}>
-            Advanced
-          </a>
+          Add Image or Text to Animate
         </div>
 
         <div className="tabs is-centered is-fullwidth">
           <ul>
-            <li className={this.state.advancedPixelTabDisplay}>
-              <a onClick={this.showPixelTab.bind(this)}>Animate to Text</a>
+            <li className={uploadImageDisplay}>
+              <a onClick={this.showImageUploadTab.bind(this)}>Image</a>
             </li>
-            <li className={this.state.advancedBackgroundTabDisplay}>
-              <a onClick={this.showBackgroundTab.bind(this)}>Animate to Image</a>
+            <li className={uploadTextDisplay}>
+              <a onClick={this.showTextUploadTab.bind(this)}>Text</a>
             </li>
           </ul>
         </div>
 
         {
-          this.state.showAnimateToText &&
-
+          this.state.uploadTab == "text" &&
           <div>
             Text to Animate
             <br />
-            <br />
-
+            <textarea name="" cols="" rows=""></textarea>
           </div>
         }
 
         {
-          this.state.showAnimateToImage &&
-
+          this.state.uploadTab == "image" &&
           <div>
-            Image to Animate
-            <br />
             <br />
             <Dragger {...draggerProps}>
               <p className="ant-upload-drag-icon">
                 <Icon type="inbox" />
               </p>
               <p className="ant-upload-text">Click or drag file to this area to upload</p>
-              <p className="ant-upload-hint">Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files</p>
             </Dragger>
           </div>
         }
 
-
-        <br />
-        <br />
-        <br />
 
         <NextButton />
 

@@ -21,6 +21,7 @@ class CustomTags extends React.Component {
           gearLoadingAnimationIn={item.gearLoadingAnimationIn}
           gearLoadingAnimationOut={item.gearLoadingAnimationOut}
           gearLoadingAnimationDisplay={item.gearLoadingAnimationDisplay}
+          data={item.data}
         />
     );
     return (

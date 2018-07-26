@@ -23,6 +23,7 @@ class ProductStage extends React.Component {
       <div id="ProductStage" className={ "stage" + this.props.stage} >
         {this.props.stage == 0 && <ProductStages.ProductStage0 /> }
         {this.props.stage == 1 && <ProductStages.ProductStage1 />}
+        {this.props.stage == 2 && <ProductStages.ProductStage2 />}
 
       </div>
     );

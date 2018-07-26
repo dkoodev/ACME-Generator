@@ -1,6 +1,6 @@
 // Modules
 import React, { Component } from 'react';
-import { faChessBoard, circle, square, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { faImages, faChessBoard, circle, faSquare, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 // Components
 import {Tooltip} from 'antd';
@@ -36,7 +36,16 @@ class CustomTag extends React.Component {
 
     let isTileShape = this.props.type == "tileShape";
 
+    let isUserUploadedImage = this.props.type.includes("userUploadedImage");
+
     let tagDisplay = "";
+
+    let imageUploadProgress = this.props.data == "" ? 0 : this.props.data;
+
+    let uploadedImageLink = this.props.data;
+
+    let isAnimation = this.props.type == 'animation';
+
     if (this.props.qrcodeAPIContext.qrcodeInfo.stencil && (this.props.type == "backgroundColor" || this.props.type == "pixelColor" )) {
       toolTipTitle = "Colors are not compatible with transparent mode";
       tagDisplay = "is-unclickable";
@@ -73,9 +82,9 @@ class CustomTag extends React.Component {
                   <i className="fa fa-cog fa-spin fa-3x fa-fw" style={{width:"auto", height:"70%",margin:"auto"}}></i>
                 </div>
               }
-              <span className="tag">Background Color</span>
+              <span className="tag">Background</span>
               <span className="tag is-primary" style={{ backgroundColor: toolTipTitle }}>
-                <FontAwesomeIcon icon="square" style={{ color : toolTipTitle == '#FFFFFF' ? '#000000' : '#FFFFFF' }}/>
+                <FontAwesomeIcon icon={faSquare} style={{ color : toolTipTitle == '#FFFFFF' ? '#000000' : '#FFFFFF' }}/>
               </span>
             </div>
           }
@@ -88,9 +97,9 @@ class CustomTag extends React.Component {
                   <i className="fa fa-cog fa-spin fa-3x fa-fw" style={{width:"auto", height:"70%",margin:"auto"}}></i>
                 </div>
               }
-              <span className="tag">Pixel Color</span>
+              <span className="tag">Pixel</span>
               <span className="tag " >
-                <FontAwesomeIcon icon="square" style={{ color : toolTipTitle }} />
+                <FontAwesomeIcon icon={faSquare} style={{ color : toolTipTitle }} />
               </span>
             </div>
           }
@@ -128,7 +137,7 @@ class CustomTag extends React.Component {
                   <i className="fa fa-cog fa-spin fa-3x fa-fw" style={{width:"auto", height:"70%",margin:"auto"}}></i>
                 </div>
               }
-              <span className="tag">Custom Resolution</span>
+              <span className="tag">Resolution</span>
               <span className="tag is-info" >
                 {toolTipTitle}
               </span>
@@ -147,6 +156,56 @@ class CustomTag extends React.Component {
               <span className="tag " >
                 <FontAwesomeIcon icon={this.props.qrcodeAPIContext.qrcodeInfo.tileShape} style={{ color : "black" }} />
               </span>
+            </div>
+          }
+
+          {
+            isUserUploadedImage && imageUploadProgress < 100 &&
+            <div className="tags has-addons">
+              {
+                gearDisplay &&
+                <div className={gearClasses.join(" ")} >
+                  <i className="fa fa-cog fa-spin fa-3x fa-fw" style={{width:"auto", height:"70%",margin:"auto"}}></i>
+                </div>
+              }
+              <span className="tag">Processing..</span>
+              <span className="tag is-info" >
+                {imageUploadProgress + "%"}
+              </span>
+            </div>
+          }
+          {
+            isUserUploadedImage && imageUploadProgress == 100 &&
+            <a href={toolTipTitle}>
+              <div className="tags has-addons">
+                {
+                  gearDisplay &&
+                  <div className={gearClasses.join(" ")} >
+                    <i className="fa fa-cog fa-spin fa-3x fa-fw" style={{width:"auto", height:"70%",margin:"auto"}}></i>
+                  </div>
+                }
+                <span className="tag">Downloading..</span>
+                <span className="tag is-link" >
+                  <FontAwesomeIcon icon={faImages}/>
+                </span>
+              </div>
+            </a>
+          }
+          {
+            isUserUploadedImage && imageUploadProgress == 101 &&
+            <a href={toolTipTitle}>
+              <div className="tags has-addons">
+                  <span className="tag">Custom Image</span>
+                  <span className="tag is-link" >
+                    <FontAwesomeIcon icon={faImages}/>
+                  </span>
+              </div>
+            </a>
+          }
+          {
+            isAnimation &&
+            <div className="tags has-addons">
+              
             </div>
           }
         </div>

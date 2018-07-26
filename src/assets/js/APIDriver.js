@@ -1,18 +1,121 @@
 const timeoutPromise = (timeout) => new Promise((resolve) => setTimeout(resolve, timeout));
 
-export const standardRequest = (text) => {
-  let url = "https://api.acme.codes/new?msg=" + encodeURI(text)
-  + "/gif";
+// export const standardRequest = (text) => {
+//   let url = "https://api.acme.codes/new?msg=" + encodeURI(text)
+//   + "/gif";
+//   return fetch(url)
+//     .then((response)=>{
+//       return response.json();
+//     })
+//     .then((json)=>{
+//       return json.orderNumber;
+//     })
+// }
+//
+// export const checkProgress = (orderNumber) => {
+//   let url = "https://api.acme.codes/orders/"
+//   + orderNumber
+//   + "/progress";
+//   return fetch(url)
+//     .then((response) => {
+//       return response.json();
+//     })
+//     .then((json) => {
+//       return json.progress;
+//     });
+// }
+
+// export const fetchFrame = (orderNumber, frameNumber) => {
+//   let url = "https://api.acme.codes/orders/"
+//   + orderNumber
+//   + "/frames/"
+//   + frameNumber;
+//
+//   return fetch(url)
+//     .then((response) => {
+//       if (response.status == 202 ) {
+//         // console.log("status is 202");
+//         return fetchFrame(orderNumber, frameNumber);
+//       }else{
+//         // console.log("status is " + response.status, response);
+//         return response.url;
+//       }
+//     })
+// }
+
+export const requestAnimation = (qrcodeInfo) => {
+  console.log("in apidriver")
+  if (qrcodeInfo.message == "") {
+    console.log("message is empty");
+    return -1;
+  }
+  if ((qrcodeInfo.resolutionValue < 100 || qrcodeInfo.resolutionValue > 400) && qrcodeInfo.resolutionValue != -1) {
+    console.log("resolution invalid");
+    return -1;
+  }
+
+  // TODO : add restrictions here
+
+  let url = "https://api.acme.codes/new?msg="
+  + encodeURI(qrcodeInfo.message)
+  + "&anim=Spin"
+  + "&xres="
+  + qrcodeInfo.resolutionValue.toString()
+  + "&yres="
+  + qrcodeInfo.resolutionValue.toString();
+
+  if (qrcodeInfo.stencil) {
+    url += "&stencil=true";
+  }else{
+    if (qrcodeInfo.pixelColor != "000000" && qrcodeInfo.pixelColor != "") {
+      url += "&pixelColor=" + qrcodeInfo.pixelColor;
+    }
+
+    if (qrcodeInfo.backgroundColor != "FFFFFF" && qrcodeInfo.backgroundColor != "") {
+      url += "&bgpColor=" + qrcodeInfo.backgroundColor;
+    }
+  }
+
+  if (qrcodeInfo.tileShape != "") {
+    url += "&tileShape=" + qrcodeInfo.tileShape;
+  }
+
+  if (qrcodeInfo.userUploadedImageUrl != "") {
+    url += "&img=" + encodeURI(qrcodeInfo.userUploadedImageUrl);
+  }
+
+
+  console.log(url);
+
   return fetch(url)
     .then((response)=>{
+      console.log(response);
       return response.json();
     })
     .then((json)=>{
       return json.orderNumber;
-    })
+    });
 }
 
-export const checkProgress = (orderNumber) => {
+export const fetchAnimation = async (orderNumber) => {
+  let url = "https://api.acme.codes/orders/"
+  + orderNumber
+  + "/gif";
+  await timeoutPromise(2000);
+  return fetch(url)
+    .then((response) => {
+      if (response.status == 202 ) {
+        console.log("status is 202");
+        return fetchAnimation(orderNumber);
+      }else if(response.status == 200){
+        console.log("status is " + response.status, response);
+        return response.url;
+      }
+    });
+}
+
+export const checkProgressAnimation = async (orderNumber) => {
+  await timeoutPromise(4000);
   let url = "https://api.acme.codes/orders/"
   + orderNumber
   + "/progress";
@@ -23,24 +126,6 @@ export const checkProgress = (orderNumber) => {
     .then((json) => {
       return json.progress;
     });
-}
-
-export const fetchFrame = (orderNumber, frameNumber) => {
-  let url = "https://api.acme.codes/orders/"
-  + orderNumber
-  + "/frames/"
-  + frameNumber;
-
-  return fetch(url)
-    .then((response) => {
-      if (response.status == 202 ) {
-        // console.log("status is 202");
-        return fetchFrame(orderNumber, frameNumber);
-      }else{
-        // console.log("status is " + response.status, response);
-        return response.url;
-      }
-    })
 }
 
 export const requestPNGOnly = (text) => {
@@ -93,6 +178,9 @@ export const requestStaticPNG = (qrcodeInfo) => {
   if (qrcodeInfo.tileShape != "") {
     url += "&tileShape=" + qrcodeInfo.tileShape;
   }
+
+
+
   console.log(url);
 
   return fetch(url)
@@ -122,28 +210,4 @@ export const fetchPNG = async (orderNumber, frameNumber) => {
         return response.url;
       }
     })
-}
-
-export const requestPNGOnlyWithColor = (text, backgroundColor, pixelColor) => {
-  console.log("Requesting pngonly");
-  let url = "https://api.acme.codes/new?msg=" + encodeURI(text)
-  + "&anim=staticCodeOnly&xres=400&yres=400&gif=0";
-
-  console.log("text:",text, " backgroundColor:", backgroundColor, " pixelColor:" ,pixelColor);
-
-  if (backgroundColor != "") {
-    url += "&bgpColor=" + backgroundColor;
-  }
-
-  if (pixelColor != "") {
-    url += "&pixelColor=" + pixelColor;
-  }
-
-  return fetch(url)
-    .then((response)=>{
-      return response.json();
-    })
-    .then((json)=>{
-      return json.orderNumber;
-    });
 }

@@ -34,10 +34,11 @@ class Editor extends React.Component {
     }
 
     return (
-      <div id="Editor" className={editorClasses+ "stage" + this.props.stage} style={{maxWidth:"100vw"}} >
+      <div id="Editor" className={editorClasses + "stage" + this.props.stage} style={{maxWidth:"100vw"}} >
         {this.props.stage == 0 && <Editors.Editor0 /> }
         {this.props.stage == 1 && <Editors.Editor1 /> }
         {this.props.stage == 2 && <Editors.Editor2 /> }
+
       </div>
     );
   }
